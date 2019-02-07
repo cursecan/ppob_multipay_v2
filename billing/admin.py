@@ -7,11 +7,15 @@ from .models import (
 
 @admin.register(BillingRecord)
 class BillingRecordAdmin(admin.ModelAdmin):
+    search_fields = [
+        'instansale_trx__code'
+    ]
     list_display = [
         'display_sale', 'display_product',
         'user',
         'debit', 'credit', 'balance',
-        'display_status'
+        'display_status',
+        'timestamp'
     ]
 
     def get_sale(self, instance):

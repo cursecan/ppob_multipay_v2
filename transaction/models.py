@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 from django.contrib.auth.models import User
 
 from core.models import CommonBase
@@ -23,7 +24,7 @@ class InstanSale(CommonBase):
 
     def save(self, *args, **kwargs):
         if self.code is None or self.code == '':
-            self.code = timezone.now().strftime('%s')
+            self.code = int(timezone.now().timestamp() * 100)
             self.product_code = self.product.code
             self.price = self.product.price
             self.commision = self.product.commision
@@ -35,6 +36,19 @@ class InstanSale(CommonBase):
 
     def get_status(self):
         return Status.objects.filter(instansale=self).latest('timestamp')
+
+    def get_billing_record(self):
+        return self.bill_instan_trx.filter(is_delete=False).latest('timestamp')
+
+    def get_commision_record(self):
+        if self.commision_instan_trx.filter(is_delete=False).exists():
+            return self.commision_instan_trx.filter(is_delete=False).latest('timestamp')
+        return None
+
+    def get_loan_record(self):
+        if self.loan_instan_trx.filter(is_delete=False).exists():
+            return self.loan_instan_trx.filter(is_delete=False).latest('timestamp')
+        return  None
 
 
 
