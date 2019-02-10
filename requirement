@@ -10,6 +10,7 @@ odfpy==1.4.0
 openpyxl==2.5.14
 pkg-resources==0.0.0
 PyJWT==1.7.1
+python-decouple==3.1
 pytz==2018.9
 PyYAML==3.13
 tablib==0.12.1
