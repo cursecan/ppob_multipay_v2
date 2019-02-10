@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from core.models import CommonBase
-from transaction.models import InstanSale
+from transaction.models import (
+    InstanSale, PpobSale
+)
 
 class BillingRecord(CommonBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -11,7 +13,8 @@ class BillingRecord(CommonBase):
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     prev_billing = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     sequence = models.PositiveSmallIntegerField(default=1)
-    instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, related_name='bill_instan_trx')
+    instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='bill_instan_trx')
+    ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='bill_ppob_trx')
 
     class Meta:
         ordering = [
@@ -30,7 +33,8 @@ class CommisionRecord(CommonBase):
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     prev_com = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     sequence = models.PositiveSmallIntegerField(default=1)
-    instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, related_name='commision_instan_trx')
+    instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='commision_instan_trx')
+    ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='commision_ppob_trx')
 
     class Meta:
         ordering = [
@@ -58,6 +62,7 @@ class LoanRecord(CommonBase):
     record_type = models.CharField(max_length=2, choices=LIST_TYPE, default=LOAN)
     payment = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_instan_trx')
+    ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_ppob_trx')
 
     class Meta:
         ordering = [
@@ -70,6 +75,7 @@ class LoanRecord(CommonBase):
 
 
 class ProfitRecord(CommonBase):
-    instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True)
+    instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='profit_instan_trx')
+    ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='profit_ppob_trx')
     debit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     credit = models.DecimalField(max_digits=12, decimal_places=2, default=0)

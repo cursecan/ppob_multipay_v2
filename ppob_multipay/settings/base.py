@@ -15,7 +15,7 @@ import datetime
 from decouple import config, Csv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,9 +23,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
@@ -80,17 +77,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ppob_multipay.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation
@@ -149,14 +135,3 @@ REST_FRAMEWORK = {
 # https://django-import-export.readthedocs.io/en/latest/getting_started.html#creating-import-export-resource
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-
-
-# JWT Django
-# https://getblimp.github.io/django-rest-framework-jwt/#additional-settings
-
-JWT_AUTH = {
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=5),
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(hours=1),
-}
-

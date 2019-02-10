@@ -45,6 +45,14 @@ class Prefix(models.Model):
 
 
 class Product(CommonBase):
+    INSTAN = 'IN'
+    INQUERY = 'QU'
+    LIST_PRODUCTTYPE = (
+        (INSTAN, 'INSTAN PRODUCT'),
+        (INQUERY, 'INQUERY PRODUCT')
+    )
+
+    type_product = models.CharField(max_length=2, choices=LIST_PRODUCTTYPE, default=INSTAN)
     code = models.CharField(max_length=20, unique=True)
     product_name = models.CharField(max_length=200)
     operator = models.ForeignKey(Operator, on_delete=models.CASCADE)
