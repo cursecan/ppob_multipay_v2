@@ -33,6 +33,14 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 
+class UserSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'email', 'first_name', 'last_name'
+        ]
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     agen = serializers.SerializerMethodField()

@@ -116,7 +116,7 @@ class Status(CommonBase):
         (COMPLETE, 'COMPLETE'),
         (FAILED, 'FAILED')
     )
-    instansale = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='isntansale_status')
+    instansale = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='instansale_status')
     ppobsale = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='ppobsale_status')
     status = models.CharField(max_length=2, choices=STATUS_LIST, default=OPEN)
 

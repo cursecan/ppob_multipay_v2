@@ -24,7 +24,26 @@ class BillingRecord(CommonBase):
     def save(self, *args, **kwargs):
         self.balance = self.user.profile.wallet.saldo + self.debit - self.credit
         super(BillingRecord, self).save(*args, **kwargs)
-    
+
+    def get_trx(self):
+        if self.instansale_trx:
+            return self.instansale_trx
+        if self.ppobsale_trx:
+            return self.ppobsale_trx
+        return None
+
+    def get_api_trx(self):
+        trx = dict()
+        if self.get_trx():
+            trx['trx_code'] = self.get_trx().code
+            trx['product'] = self.get_trx().product.product_name
+            trx['commision'] = self.get_trx().commision
+        return trx
+
+    def get_api_status(self):
+        if self.get_trx():
+            return self.get_trx().get_status().get_status_display()
+        return None
 
 class CommisionRecord(CommonBase):
     agen = models.ForeignKey(User, on_delete=models.CASCADE)

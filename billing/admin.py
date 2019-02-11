@@ -7,6 +7,7 @@ from .models import (
 
 @admin.register(BillingRecord)
 class BillingRecordAdmin(admin.ModelAdmin):
+    list_per_page = 20
     search_fields = [
         'instansale_trx__code'
     ]
@@ -24,14 +25,19 @@ class BillingRecordAdmin(admin.ModelAdmin):
         return None
 
     def display_sale(self, instance):
-        return self.get_sale(instance).code
+        if self.get_sale(instance):
+            return self.get_sale(instance).code
+        return None
 
     def display_product(self, instance):
-        return self.get_sale(instance).product.product_name
+        if self.get_sale(instance):
+            return self.get_sale(instance).product.product_name
+        return None
 
     def display_status(self, instance):
-        return self.get_sale(instance).get_status()
-
+        if self.get_sale(instance):
+            return self.get_sale(instance).get_status()
+        return None
 
 @admin.register(CommisionRecord)
 class CommisionRecordAdmin(admin.ModelAdmin):

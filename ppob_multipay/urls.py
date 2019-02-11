@@ -19,11 +19,19 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from rest_framework_jwt.views import (
+    obtain_jwt_token, refresh_jwt_token, verify_jwt_token
+)
+
 urlpatterns = [
+    path('jwt-api-token-auth/', obtain_jwt_token),
+    path('jwt-api-token-refresh/', refresh_jwt_token),
+    path('jwt-api-token-verify/', verify_jwt_token),
     path('admin/', admin.site.urls),
     path('api/profile/', include('userprofile.api.urls')),
     path('api/product/', include('product.api.urls')),
     path('api/transaction/', include('transaction.api.urls')),
+    path('api/billing/', include('billing.api.urls')),
 ]
 
 if not settings.DEBUG:
