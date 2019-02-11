@@ -3,7 +3,7 @@ from decouple import config
 import datetime
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 # Database
