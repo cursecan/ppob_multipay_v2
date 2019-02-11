@@ -54,11 +54,13 @@ class ProductResource(resources.ModelResource):
         model = Product
         fields = [
             'code', 'product_name',
+            'type_product',
             'operator', 'group',
             'nominal', 'price', 'commision',
         ]
         export_order = [
             'code', 'product_name',
+            'type_product',
             'operator', 'group',
             'nominal', 'price', 'commision',
         ]
