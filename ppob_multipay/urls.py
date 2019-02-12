@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/product/', include('product.api.urls')),
     path('api/transaction/', include('transaction.api.urls')),
     path('api/billing/', include('billing.api.urls')),
+    path('api/payment/', include('payment.api.urls')),
 ]
 
 if not settings.DEBUG:
