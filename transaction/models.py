@@ -33,7 +33,7 @@ class PpobSale(CommonBase):
 
     def save(self, *args, **kwargs):
         if self.code is None or self.code == '':
-            self.code = int(timezone.now().timestamp() * 100)
+            self.code = str(int(timezone.now().timestamp() * 100))
             self.product_code = self.product.code
             self.commision = self.product.commision
 
@@ -77,7 +77,7 @@ class InstanSale(CommonBase):
 
     def save(self, *args, **kwargs):
         if self.code is None or self.code == '':
-            self.code = int(timezone.now().timestamp() * 100)
+            self.code = str(int(timezone.now().timestamp() * 100))
             self.product_code = self.product.code
             self.price = self.product.price
             self.commision = self.product.commision
