@@ -64,7 +64,7 @@ class InstanSaleCustomSerializer(InstanSaleSerializer):
                         'error': 'Saldo agen not enough.'
                     })
             else :
-                serializers.ValidationError({
+                raise serializers.ValidationError({
                     'error': 'Related agen not found.'
                 })
         return data
