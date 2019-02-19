@@ -16,6 +16,7 @@ class PpobSale(CommonBase):
     )
 
     code = models.CharField(max_length=30, unique=True, editable=False)
+    inquery = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='ppob_inquery')
     customer = models.CharField(max_length=30)
     sale_type = models.CharField(max_length=2, choices=SALETYPE_LIST, default=INQUERY)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ppob_product')
@@ -33,13 +34,24 @@ class PpobSale(CommonBase):
 
     def save(self, *args, **kwargs):
         if self.code is None or self.code == '':
+            if self.inquery:
+                self.product = self.inquery.product
+                self.customer = self.inquery.customer
+                self.sale_type = self.PAY
+
             self.code = str(int(timezone.now().timestamp() * 100))
             self.product_code = self.product.code
             self.commision = self.product.commision
 
+            if self.product.price != 0:
+                self.price = self.product.price
+                self.nominal = self.product.nominal
+
         super(PpobSale, self).save(*args, **kwargs)
 
     def __str__(self):
+        if self.sale_type == self.INQUERY:
+            return 'IN ' + self.code
         return self.code
 
     def get_status(self):
@@ -57,6 +69,16 @@ class PpobSale(CommonBase):
         if self.loan_ppob_trx.filter(is_delete=False).exists():
             return self.loan_ppob_trx.filter(is_delete=False).latest('timestamp')
         return  None
+
+    def get_sn(self):
+        return 'Ppob dosnt has sn.'
+    
+
+    def get_profit(self):
+        return self.price - self.responseppobsale.saldo_terpotong
+
+    def get_customer_name(self):
+        return self.responseppobsale.nama_pelanggan
 
 
 
@@ -103,7 +125,17 @@ class InstanSale(CommonBase):
             return self.loan_instan_trx.filter(is_delete=False).latest('timestamp')
         return  None
 
+    def get_sn(self):
+        try :
+            return self.responseinsale.sn
+        except :
+            return None
 
+    def get_profit(self):
+        try :
+            return self.price - self.responseinsale.saldo_terpotong
+        except :
+            return 0
 
 class Status(CommonBase):
     OPEN = 'OP'
@@ -122,3 +154,49 @@ class Status(CommonBase):
 
     def __str__(self):
         return self.get_status_display()
+
+
+class ResponseInSale(CommonBase):
+    sale = models.OneToOneField(InstanSale, on_delete=models.CASCADE)
+    kode_produk = models.CharField(max_length=100, blank=True)
+    waktu = models.CharField(max_length=100, blank=True)
+    no_hp = models.CharField(max_length=100, blank=True)
+    sn = models.CharField(max_length=100, blank=True)
+    nominal = models.PositiveIntegerField(default=0)
+    ref1 = models.CharField(max_length=100, blank=True)
+    ref2 = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=100, blank=True)
+    ket = models.CharField(max_length=200, blank=True)
+    saldo_terpotong = models.PositiveIntegerField(default=0)
+    sisa_saldo = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = [
+            '-timestamp'
+        ]
+
+
+class ResponsePpobSale(CommonBase):
+    sale = models.OneToOneField(PpobSale, on_delete=models.CASCADE)
+    kode_produk = models.CharField(max_length=100, blank=True)
+    waktu = models.CharField(max_length=100, blank=True)
+    idpel1 = models.CharField(max_length=100, blank=True)
+    idpel2 = models.CharField(max_length=100, blank=True)
+    idpel3 = models.CharField(max_length=100, blank=True)
+    nama_pelanggan = models.CharField(max_length=100, blank=True)
+    periode = models.CharField(max_length=100, blank=True)
+    nominal = models.PositiveIntegerField(default=0)
+    admin = models.PositiveIntegerField(default=0)
+    ref1 = models.CharField(max_length=100, blank=True)
+    ref2 = models.CharField(max_length=100, blank=True)
+    ref3 = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=100, blank=True)
+    ket = models.CharField(max_length=200, blank=True)
+    saldo_terpotong = models.PositiveIntegerField(default=0)
+    sisa_saldo = models.PositiveIntegerField(default=0)
+    url_struk = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        ordering = [
+            '-timestamp'
+        ]

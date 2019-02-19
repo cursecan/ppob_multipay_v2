@@ -22,12 +22,14 @@ class BillingRecordAdmin(admin.ModelAdmin):
     def get_sale(self, instance):
         if instance.instansale_trx:
             return instance.instansale_trx
+        if instance.ppobsale_trx:
+            return instance.ppobsale_trx
         return None
 
     def display_sale(self, instance):
         if self.get_sale(instance):
             return self.get_sale(instance).code
-        return None
+        return  None
 
     def display_product(self, instance):
         if self.get_sale(instance):
@@ -57,4 +59,31 @@ class LoanRecordAdmin(admin.ModelAdmin):
 
 @admin.register(ProfitRecord)
 class ProfitRecordAdmin(admin.ModelAdmin):
-    pass
+    search_fields = [
+        'debit', 'credit'
+    ]
+    list_display = [
+        'display_trx',
+        'display_potensi',
+        'debit', 'credit',
+        'display_commision',
+        'timestamp',
+    ]
+
+    def display_commision(self, instance):
+        if instance.instansale_trx:
+            return instance.instansale_trx.commision
+        else :
+            return instance.ppobsale_trx.commision
+
+    def display_potensi(self, instance):
+        if instance.instansale_trx:
+            return instance.instansale_trx.get_profit()
+        else :
+            return instance.ppobsale_trx.get_profit()
+
+    def display_trx(self, instance):
+        if instance.instansale_trx:
+            return instance.instansale_trx
+        else :
+            return instance.ppobsale_trx

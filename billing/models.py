@@ -44,6 +44,7 @@ class BillingRecord(CommonBase):
             trx['trx_code'] = self.get_trx().code
             trx['product'] = self.get_trx().product.product_name
             trx['commision'] = self.get_trx().commision
+            trx['sn'] = self.get_trx().get_sn()
         return trx
 
     def get_api_status(self):

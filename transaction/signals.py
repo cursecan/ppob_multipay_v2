@@ -3,11 +3,16 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from .models import (
-    InstanSale, Status, PpobSale
+    InstanSale, Status, PpobSale,
+    ResponseInSale, ResponsePpobSale
 )
 from billing.models import (
     BillingRecord, CommisionRecord,
     LoanRecord, ProfitRecord
+)
+
+from .tasks import (
+    instansale_tasks, ppobsale_tasks
 )
 
 
@@ -16,6 +21,11 @@ def intansale_billing_record(sender, instance, created, **kwargs):
     if created:
         # Initial status transaction (OPEN)
         Status.objects.create(instansale=instance)
+
+        # Response Sale Init
+        ResponseInSale.objects.create(
+            sale = instance
+        )
 
         # Loan recording
         if instance.create_by.profile.wallet.get_saldo() < instance.product.price:
@@ -46,11 +56,22 @@ def intansale_billing_record(sender, instance, created, **kwargs):
             instansale_trx = instance,
         )
 
+        # Task process
+        instansale_tasks(instance.id)
+
+
+
+
 @receiver(post_save, sender=PpobSale)
 def ppobsale_billing_record(sender, instance, created, **kwargs):
     if created:
         # Initial status transaction (OPEN)
         Status.objects.create(ppobsale=instance)
+
+        # Response Ppob Sale
+        ResponsePpobSale.objects.create(
+            sale = instance
+        )
 
         if instance.sale_type == 'PY':
             # Loan recording
@@ -81,6 +102,13 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
             ProfitRecord.objects.create(
                 ppobsale_trx = instance,
             )
+
+            # Task process
+            ppobsale_tasks(instance.id)
+
+        else :
+            # Task process
+            ppobsale_tasks.now(instance.id)
         
 
 @receiver(post_save, sender=Status)

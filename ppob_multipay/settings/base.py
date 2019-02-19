@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'import_export',
+    'background_task',
 
     'core',
     'billing',
@@ -135,3 +136,9 @@ REST_FRAMEWORK = {
 # https://django-import-export.readthedocs.io/en/latest/getting_started.html#creating-import-export-resource
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+
+# Rajabiller Link Operator
+RB_LINK = config('RB_LINK')
+RB_USER = config('RB_USER')
+RB_PIN = config('RB_PIN')

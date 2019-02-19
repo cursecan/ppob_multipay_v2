@@ -13,8 +13,14 @@ from userprofile.models import (
 
 
 class UserListApiView(ListAPIView):
-    queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(profile__agen=self.request.user)
+        
+        return queryset
     
 
 class UserDetailApiView(RetrieveAPIView):

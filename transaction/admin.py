@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from .models import (
-    InstanSale, Status, PpobSale
+    InstanSale, Status, PpobSale,
+    ResponseInSale, ResponsePpobSale
 )
 from .forms import (
     InstanSaleForm,
@@ -19,4 +20,12 @@ class PpobSaleAdmin(admin.ModelAdmin):
 
 @admin.register(Status)
 class StatusAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(ResponseInSale)
+class ResponseInSaleAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(ResponsePpobSale)
+class ResponsePpobSaleAdmin(admin.ModelAdmin):
     pass

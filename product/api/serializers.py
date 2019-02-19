@@ -34,3 +34,11 @@ class ProductSerializer(serializers.ModelSerializer):
             'nominal', 'price', 'commision',
             'is_active'
         ]
+
+
+class ProductInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            'code', 'product_name',
+        ]
