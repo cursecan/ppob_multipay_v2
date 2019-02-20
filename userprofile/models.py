@@ -21,6 +21,7 @@ class Profile(CommonBase):
     ponsel = models.CharField(max_length=20, blank=True)
     user_type = models.PositiveSmallIntegerField(choices=PROFILE_TYPE_LIST, default=PERSONAL)
     agen = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='profile_agen')
+    email_confirmed = models.BooleanField(default=False)
 
     class Meta:
         ordering = [

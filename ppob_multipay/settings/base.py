@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_hosts',
     'rest_framework',
     'import_export',
     'background_task',
@@ -50,6 +51,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'ppob_multipay.urls'
@@ -64,7 +69,7 @@ ROOT_URLCONF = 'ppob_multipay.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,8 +142,14 @@ REST_FRAMEWORK = {
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 # Rajabiller Link Operator
 RB_LINK = config('RB_LINK')
 RB_USER = config('RB_USER')
 RB_PIN = config('RB_PIN')
+
+ROOT_HOSTCONF = 'ppob_multipay.hosts'  # Change `mysite` to the name of your project
+DEFAULT_HOST = 'www'  # Name of the default host, we will create it in the next steps

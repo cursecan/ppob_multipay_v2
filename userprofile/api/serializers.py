@@ -124,7 +124,7 @@ class CustomSignupSerializer(SimpleSignUpSerializer, serializers.ModelSerializer
         password = validated_data.get('password')
 
         user_obj = User.objects.create_user(
-            email, email, password, first_name=first_name, last_name=last_name
+            email, email, password, first_name=first_name, last_name=last_name, is_active=False
         )
         user_obj.profile.ponsel = ponsel
         user_obj.profile.save()
