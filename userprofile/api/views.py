@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
 from rest_framework.generics import (
-    ListAPIView, RetrieveAPIView
+    ListAPIView, RetrieveAPIView, CreateAPIView
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 from .serializers import *
 from userprofile.models import (
@@ -40,3 +41,7 @@ class WalletListApiView(ListAPIView):
     serializer_class = WalletSerializer
 
 
+class SignUpApiView(CreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = CustomSignupSerializer
+    permission_classes = [AllowAny]

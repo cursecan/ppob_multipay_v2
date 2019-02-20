@@ -7,4 +7,5 @@ urlpatterns = [
     path('getme/', views.GetMeApiView.as_view(), name='getme'),
     path('user-list/', views.UserListApiView.as_view(), name='list_user'),
     path('user/<int:id>/', views.UserDetailApiView.as_view(), name='detail_user'),
+    path('signup/', views.SignUpApiView.as_view(), name='user_signup'),
 ]

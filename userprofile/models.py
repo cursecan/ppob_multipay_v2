@@ -18,6 +18,7 @@ class Profile(CommonBase):
     )
     guid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    ponsel = models.CharField(max_length=20, blank=True)
     user_type = models.PositiveSmallIntegerField(choices=PROFILE_TYPE_LIST, default=PERSONAL)
     agen = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='profile_agen')
 

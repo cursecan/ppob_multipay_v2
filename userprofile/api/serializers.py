@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db import transaction
 from rest_framework import serializers
 
 from userprofile.models import (
@@ -75,3 +76,57 @@ class WalletSerializer(serializers.ModelSerializer):
 
     def get_saldo(self, obj):
         return obj.get_saldo()
+
+
+
+class SimpleSignUpSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True)
+    first_name = serializers.CharField(write_only=True)
+    last_name = serializers.CharField(write_only=True, allow_blank=True, allow_null=True)
+    ponsel = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        ponsel = data.get('ponsel')
+        if User.objects.filter(username=email).exists():
+            raise serializers.ValidationError({
+                'error': 'This email address already taken.' 
+            })
+        if Profile.objects.filter(ponsel=ponsel).exists():
+            raise serializers.ValidationError({
+                'error': 'This ponsel already taken.'
+            })
+        return data
+
+
+class CustomSignupSerializer(SimpleSignUpSerializer, serializers.ModelSerializer):
+    user = UserSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            'id',
+            'user', 'ponsel',
+            'email', 'first_name', 'last_name', 'password'
+        ]
+        read_only_fields = [
+            'id',
+            'user'
+        ]
+
+
+    def create(self, validated_data):
+        email = validated_data.get('email')
+        first_name = validated_data.get('first_name')
+        last_name = validated_data.get('last_name')
+        ponsel = validated_data.get('ponsel')
+        password = validated_data.get('password')
+
+        user_obj = User.objects.create_user(
+            email, email, password, first_name=first_name, last_name=last_name
+        )
+        user_obj.profile.ponsel = ponsel
+        user_obj.profile.save()
+
+        return user_obj.profile
