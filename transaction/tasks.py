@@ -85,13 +85,25 @@ def ppobsale_tasks(sale_id):
             payload['idpel1'] = customer
         else :
             payload['idpel2'] = customer
-            
 
+    # PLN PASCABAYAR GROUP
+    elif ppob_sale.product.group.code == 'PLN':
+        payload['kode_produk'] = ppob_sale.product.code
+        payload['idpel1'] = customer
+            
     # TELEPON GROUP
-    elif ppob_sale.product.group.code == 'TLP':
-        payload['kode_produk'] = 'TELEPON'
+    elif ppob_sale.product.group.code in ['TLP', 'SPEEDY']:
+        payload['kode_produk'] = ppob_sale.product.code
         payload['idpel1'] = customer[:3]
         payload['idpel2'] = customer[4:]
+
+    # PDAM GROUP
+    elif ppob_sale.product.group.code == 'PDAM':
+        payload['kode_produk'] = ppob_sale.product.code
+        if ppob_sale.product.code in ['WABGK', 'WAMJK', 'WATAPIN']:
+            payload['idpel2'] = customer
+        else :
+            payload['idpel1'] = customer
 
 
     # PAYMENT REQUEST
