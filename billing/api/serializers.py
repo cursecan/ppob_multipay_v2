@@ -19,6 +19,7 @@ class BillingRecordSerializer(serializers.ModelSerializer):
             'debit', 'credit', 'balance',
             'transaction',
             'status',
+            'timestamp',
             'user'
         ]
 

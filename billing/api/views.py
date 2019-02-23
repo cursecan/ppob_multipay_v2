@@ -24,7 +24,7 @@ class BillingRecordTransactionApiListView(ListAPIView):
         )
 
         if not self.request.user.is_superuser :
-            if self.user.profile.user_type in [1,3]:
+            if self.request.user.profile.user_type in [1,3]:
                 queryset = queryset.filter(
                     user = self.request.user
                 )
