@@ -168,7 +168,6 @@ class ResponseInSale(CommonBase):
     status = models.CharField(max_length=100, blank=True)
     ket = models.CharField(max_length=200, blank=True)
     saldo_terpotong = models.PositiveIntegerField(default=0)
-    sisa_saldo = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = [
@@ -193,7 +192,6 @@ class ResponsePpobSale(CommonBase):
     status = models.CharField(max_length=100, blank=True)
     ket = models.CharField(max_length=200, blank=True)
     saldo_terpotong = models.PositiveIntegerField(default=0)
-    sisa_saldo = models.PositiveIntegerField(default=0)
     url_struk = models.CharField(max_length=200, blank=True)
 
     class Meta:

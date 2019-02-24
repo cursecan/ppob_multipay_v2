@@ -55,8 +55,7 @@ def instansale_tasks(sale_id):
         ref2 = rson.get('REF2', ''),
         status = rson.get('STATUS', ''),
         ket = rson.get('KET', ''),
-        saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0)),
-        sisa_saldo = int(rson.get('SISA_SALDO', 0))
+        saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0))
     )
 
 
@@ -148,6 +147,5 @@ def ppobsale_tasks(sale_id):
         status = rson.get('STATUS', ''),
         ket = rson.get('KET', ''),
         saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0)),
-        sisa_saldo = int(rson.get('SISA_SALDO', 0)),
         url_struk = rson.get('URL_STRUK', '')
     )
