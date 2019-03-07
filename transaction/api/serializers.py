@@ -49,7 +49,7 @@ class PpobInquerySerializer(serializers.ModelSerializer):
         model = PpobSale
         fields = [
             'id', 'code',
-            'customer_name',
+            # 'customer_name',
             'product_code', 'customer_number', 'customer_detail'
         ]
         read_only_fields = [
