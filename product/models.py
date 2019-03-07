@@ -64,7 +64,7 @@ class Product(CommonBase):
 
     class Meta:
         ordering = [
-            '-timestamp'
+            'operator', 'group', 'nominal', 'product_name'
         ]
 
     def __str__(self):
