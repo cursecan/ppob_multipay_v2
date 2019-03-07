@@ -84,6 +84,7 @@ class PpobSale(CommonBase):
 
     def get_customer_detail(self):
         return {
+            'number': self.customer,
             'name': self.responseppobsale.nama_pelanggan,
             'tagihan': self.responseppobsale.nominal,
             'admin': self.responseppobsale.admin

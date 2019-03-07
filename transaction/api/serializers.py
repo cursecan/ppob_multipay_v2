@@ -42,7 +42,7 @@ class PpobSaleSerializer(serializers.ModelSerializer):
 class PpobInquerySerializer(serializers.ModelSerializer):
     product_code = serializers.CharField(write_only=True)
     customer_number = serializers.CharField(write_only=True)
-    customer_name = serializers.SerializerMethodField(read_only=True)
+    # customer_name = serializers.SerializerMethodField(read_only=True)
     customer_detail = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -57,8 +57,8 @@ class PpobInquerySerializer(serializers.ModelSerializer):
             'customer_name',
         ]
 
-    def get_customer_name(self, obj):
-        return obj.get_customer_name()
+    # def get_customer_name(self, obj):
+    #     return obj.get_customer_name()
 
     def get_customer_detail(self, obj):
         return obj.get_customer_detail()
