@@ -38,6 +38,8 @@ class PpobSale(CommonBase):
                 self.product = self.inquery.product
                 self.customer = self.inquery.customer
                 self.sale_type = self.PAY
+                self.nominal = self.inquery.responseppobsale.nominal
+                self.price = self.inquery.responseppobsale.get_price()
 
             self.code = str(int(timezone.now().timestamp() * 100))
             self.product_code = self.product.code
@@ -71,7 +73,7 @@ class PpobSale(CommonBase):
         return  None
 
     def get_sn(self):
-        return 'Ppob dosnt has sn.'
+        return self.responseppobsale.ref3
     
 
     def get_profit(self):
@@ -198,3 +200,6 @@ class ResponsePpobSale(CommonBase):
         ordering = [
             '-timestamp'
         ]
+
+    def get_price(self):
+        return self.nominal + self.admin

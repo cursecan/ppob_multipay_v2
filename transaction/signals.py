@@ -104,7 +104,7 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
             )
 
             # Task process
-            ppobsale_tasks(instance.id)
+            ppobsale_tasks.now(instance.id)
 
         else :
             # Task process
