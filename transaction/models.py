@@ -82,6 +82,12 @@ class PpobSale(CommonBase):
     def get_customer_name(self):
         return self.responseppobsale.nama_pelanggan
 
+    def get_customer_detail(self):
+        return {
+            'name': self.responseppobsale.nama_pelanggan,
+            'tagihan': self.responseppobsale.nominal,
+            'admin': self.responseppobsale.admin
+        }
 
 
 class InstanSale(CommonBase):

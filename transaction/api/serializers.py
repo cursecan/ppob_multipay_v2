@@ -43,13 +43,14 @@ class PpobInquerySerializer(serializers.ModelSerializer):
     product_code = serializers.CharField(write_only=True)
     customer_number = serializers.CharField(write_only=True)
     customer_name = serializers.SerializerMethodField(read_only=True)
+    customer_detail = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = PpobSale
         fields = [
             'id', 'code',
             'customer_name',
-            'product_code', 'customer_number'
+            'product_code', 'customer_number', 'customer_detail'
         ]
         read_only_fields = [
             'id', 'code',
@@ -58,6 +59,9 @@ class PpobInquerySerializer(serializers.ModelSerializer):
 
     def get_customer_name(self, obj):
         return obj.get_customer_name()
+
+    def get_customer_detail(self, obj):
+        return obj.get_customer_detail()
 
     def validate(self, data):
         prod_code = data.get('product_code')
@@ -171,6 +175,8 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
             inquery = inquery_obj,
             create_by = user_obj
         )
+
+        sale_obj.refresh_from_db()
 
         return sale_obj
 
