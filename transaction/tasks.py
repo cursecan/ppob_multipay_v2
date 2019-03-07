@@ -16,6 +16,7 @@ _link = settings.RB_LINK
 def instansale_tasks(sale_id):
     insale_obj = InstanSale.objects.get(id=sale_id)
 
+    # DEFAULT OF PULSA DATA
     payload = {
         "method"      : "rajabiller.pulsa",
         "uid"         : _user,
@@ -25,7 +26,7 @@ def instansale_tasks(sale_id):
         "ref1"        : insale_obj.code
     }
 
-    # DATA PULSA GROUP
+    # GAME GROUP
     if not insale_obj.product.group.code in ['PULSA', 'DATA']:
         payload['method'] = "rajabiller.game"
 
@@ -116,6 +117,7 @@ def ppobsale_tasks(sale_id):
             ppobsale = ppob_sale,
             status = 'IN'
         )
+        
 
 
     try :

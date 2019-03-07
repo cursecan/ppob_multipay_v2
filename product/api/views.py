@@ -60,7 +60,7 @@ class OperatorListApiView(ListAPIView):
         group = self.request.GET.get('gcode', None)
 
         if group:
-            queryset = queryset.filter(group__code=group)
+            queryset = queryset.filter(group__code=group).distinct()
         
         return queryset
 
