@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (
-    Payment, LoanPayment
+    Payment, LoanPayment, Transfer
 )
 
 
@@ -10,5 +10,9 @@ class PaymentAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(LoanPayment)
-class LoanPayment(admin.ModelAdmin):
+class LoanPaymentAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Transfer)
+class TrasferAdmin(admin.ModelAdmin):
     pass

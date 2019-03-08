@@ -8,7 +8,8 @@ from transaction.models import (
     InstanSale, PpobSale
 )
 from payment.models import (
-    Payment, LoanPayment
+    Payment, LoanPayment,
+    Transfer,
 )
 
 class BillingRecord(CommonBase):
@@ -21,7 +22,8 @@ class BillingRecord(CommonBase):
     instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='bill_instan_trx')
     ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='bill_ppob_trx')
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE, blank=True, null=True, related_name='billing_apyment')
-    
+    transfer = models.ForeignKey(Transfer, on_delete=models.CASCADE, blank=True, null=True, related_name='billing_transfer')
+
     class Meta:
         ordering = [
             '-timestamp'

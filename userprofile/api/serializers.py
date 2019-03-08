@@ -23,11 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
         max_digits=12, decimal_places=2, 
         source='profile.wallet.loan', read_only=True
     )
+    guid = serializers.CharField(
+        source='profile.guid', read_only=True
+    )
 
     class Meta:
         model = User
         fields = [
-            'id',
+            'id', 'guid',
             'email',
             'first_name', 'last_name',
             'saldo', 'commision', 'limit', 'loan',

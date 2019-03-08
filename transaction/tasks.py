@@ -79,7 +79,7 @@ def ppobsale_tasks(sale_id):
 
     # TOKEN LISTRIK GROUP
     if ppob_sale.product.group.code == 'TOPLN':
-        payload['kode_produk'] = 'PLNPRAB'
+        payload['kode_produk'] = 'PLNPRAH'
 
         if len(customer) == 11:
             payload['idpel1'] = customer
