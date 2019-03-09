@@ -33,8 +33,7 @@ def payloan_biling_record(sender, instance, created, **kwargs):
 
         if not instance.sender.is_superuser:
             # SENDER IS AGEN OR OTHER CUSTOMER // NOMINAL HARUS SAMA DENGAN UTANGNYA
-            if instance.user.profile.agen == instance.sender:
-                loan_objs = loan_objs.filter(agen=instance.sender)
+            loan_objs = loan_objs.filter(agen=instance.sender)
 
         nominal = instance.amount
         rec_loan_list = []

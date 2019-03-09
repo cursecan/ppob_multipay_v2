@@ -134,6 +134,16 @@ class TransferSerializer(serializers.ModelSerializer):
                 'error': 'Receiver canot be found.'
             })
 
+        if receive_profile.agen != sender:
+            raise serializers.ValidationError({
+                'error': 'Valid for its agen or admin only.'
+            })
+
+        if receive_profile.wallet.loan != 0:
+            raise serializers.ValidationError({
+                'error': 'User loan must be clean.'
+            })
+
         if amount < 1:
             raise serializers.ValidationError({
                 'error': 'Amount has to larger than 0.'
