@@ -33,7 +33,8 @@ def payloan_biling_record(sender, instance, created, **kwargs):
 
         if not instance.sender.is_superuser:
             # SENDER IS AGEN OR OTHER CUSTOMER // NOMINAL HARUS SAMA DENGAN UTANGNYA
-            loan_objs = loan_objs.filter(agen=instance.sender)
+            if instance.user.profile.agen == instance.sender:
+                loan_objs = loan_objs.filter(agen=instance.sender)
 
         nominal = instance.amount
         rec_loan_list = []
@@ -83,8 +84,9 @@ def get_transfer_biliing_record(sender, instance, created, **kwargs):
         )
 
         # TAMBAH SALDO RECEIVER
-        BillingRecord.objects.create(
+        LoanPayment.objects.create(
             user = instance.receiver,
-            debit = instance.amount,
-            transfer = instance,
+            sender = instance.sender,
+            amount= instance.amount,
+            virtual_cash = True
         )
