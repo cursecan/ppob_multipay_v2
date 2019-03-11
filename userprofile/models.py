@@ -34,6 +34,9 @@ class Profile(CommonBase):
     def get_username(self):
         return self.user.username
 
+    def get_agen(self):
+        return self.agen.username
+
 
 class Wallet(CommonBase):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)

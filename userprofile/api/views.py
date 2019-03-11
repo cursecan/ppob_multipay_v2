@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework.generics import (
-    ListAPIView, RetrieveAPIView, CreateAPIView
+    ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -45,3 +45,16 @@ class SignUpApiView(CreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = CustomSignupSerializer
     permission_classes = [AllowAny]
+
+
+class UpdateLimitApiView(UpdateAPIView):
+    serializer_class = WalletSerializer
+    lookup_url_kwarg = 'id'
+    lookup_field = 'profile__guid'
+
+    def get_queryset(self):
+        queryset = Wallet.objects.all()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(profile__agen=self.request.user)
+        return queryset
+

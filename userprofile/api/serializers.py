@@ -62,16 +62,24 @@ class ProfileSerializer(serializers.ModelSerializer):
         return obj.get_username()
 
     def get_agen(self, obj):
-        return obj.get_username()
+        return obj.get_agen()
 
 
 class WalletSerializer(serializers.ModelSerializer):
     saldo = serializers.SerializerMethodField(read_only=True)
     profile = ProfileSerializer(read_only=True)
 
+    new_limit = serializers.DecimalField(max_digits=12, decimal_places=0, write_only=True)
+
     class Meta:
         model = Wallet
         fields = [
+            'id',
+            'profile',
+            'saldo', 'commision', 'loan', 'limit',
+            'new_limit',
+        ]
+        read_only_fields = [
             'id',
             'profile',
             'saldo', 'commision', 'loan', 'limit'
@@ -80,6 +88,10 @@ class WalletSerializer(serializers.ModelSerializer):
     def get_saldo(self, obj):
         return obj.get_saldo()
 
+    def update(self, instance, validated_data):
+        instance.limit = validated_data.get('new_limit')
+        instance.save()
+        return instance
 
 
 class SimpleSignUpSerializer(serializers.Serializer):
@@ -133,3 +145,7 @@ class CustomSignupSerializer(SimpleSignUpSerializer, serializers.ModelSerializer
         user_obj.profile.save()
 
         return user_obj.profile
+
+
+
+
