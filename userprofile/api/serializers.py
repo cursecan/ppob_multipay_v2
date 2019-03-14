@@ -26,12 +26,16 @@ class UserSerializer(serializers.ModelSerializer):
     guid = serializers.CharField(
         source='profile.guid', read_only=True
     )
+    ponsel = serializers.CharField(
+        read_only=True,
+        source='profile.ponsel'
+    )
 
     class Meta:
         model = User
         fields = [
             'id', 'guid',
-            'email',
+            'email', 'ponsel',
             'first_name', 'last_name',
             'saldo', 'commision', 'limit', 'loan',
         ]
