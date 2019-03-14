@@ -38,21 +38,9 @@
                 <div class="ui inverted grey segment">
                     <div class="ui tiny inverted statistic">
                         <div class="label">Utang</div>
-                        <div class="value">0</div>
+                        <div class="value">{{ loan.t|default:0|intcomma }}</div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="eight wide column">
-                <div id="commision-chart-id" class="ui segment">
-                    <!-- Commision Chart -->
-                </div>
-                <table id="commision-id" class="ui small table js-data" target-url="{% url 'dashboard:json_commision_profile' profile.id %}">
-                    <tbody>
-                        <!-- Content -->
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -61,34 +49,9 @@
 
 {% block js %}
 <!-- <script src="https://code.highcharts.com/highcharts.js"></script> -->
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<!-- <script src="https://code.highcharts.com/stock/highstock.js"></script> -->
 <script>
     $(document).ready(function() {
-        var getinit_data = function(e) {
-            $.ajax({
-                url: e.attr('target-url'),
-                dataType: 'json',
-                success: function(data) {
-                    $('#' + e.attr('id') + ' tbody').html(data.html);
-                }
-            });
-            return false;
-        }
-
-        $('.js-data').each(function() {
-            var obj = $(this);
-            getinit_data(obj);
-        });
-
-        $.ajax({
-            url: "{% url 'dashboard:json_commision_chart' profile.id %}",
-            dataType: "json",
-            success: function(data) {
-                console.log(data);
-                Highcharts.stockChart('commision-chart-id', data);
-            }
-        });
-
     });
 </script>
 {% endblock %}

@@ -10,7 +10,9 @@ from billing.models import (
     BillingRecord, CommisionRecord, LoanRecord
 )
 from userprofile.models import Profile
-
+from core.decorators import (
+    user_is_agen, user_is_related_agen
+)
 
 def get_pagination(obj, n=10, page=1):
     page_list = Paginator(obj, n)
@@ -27,7 +29,13 @@ def get_pagination(obj, n=10, page=1):
 # INDEX
 @login_required
 def index(request):
-    return render(request, 'dashboard/index.html')
+    bill_objs = BillingRecord.objects.filter(
+        Q(instansale_trx__isnull=False) | Q(ppobsale_trx__isnull=False)
+    )
+    content = {
+        'bill_list': bill_objs[:10]
+    }
+    return render(request, 'dashboard/index.html', content)
 
 
 # SALE VIEW
@@ -51,11 +59,17 @@ def sale_view(request):
 
 # USER LIST VIEW
 @login_required
+@user_is_agen
 def user_profile_view(request):
     page = request.GET.get('page', None)
     profile_objs = Profile.objects.select_related(
         'wallet'
     ).order_by('user__username')
+
+    if not request.user.is_superuser:
+        profile_objs = profile_objs.filter(
+            agen = request.user
+        )
     
     profile_list = get_pagination(profile_objs, page=page)
 
@@ -67,16 +81,33 @@ def user_profile_view(request):
 
 # PROFIL DETAIL
 @login_required
+@user_is_agen
+@user_is_related_agen
 def user_profile_detail_view(request, id):
     profile_obj = get_object_or_404(Profile, pk=id)
+    sum_loan = LoanRecord.objects.filter(
+        user__profile__id=profile_obj.id
+    )
+    if not request.user.is_superuser:
+        sum_loan = sum_loan.filter(
+            agen = request.user
+        )
+
+    sum_loan = sum_loan.aggregate(
+        t = Sum(F('credit')-F('debit'))
+    )
+
     content = {
-        'profile': profile_obj
+        'profile': profile_obj,
+        'loan': sum_loan,
     }
     return render(request, 'dashboard/pg-user-detail.html', content)
 
 
 # SALE PROFILE
 @login_required
+@user_is_agen
+@user_is_related_agen
 def json_user_billing_view(request, id):
     data = dict()
     page = request.GET.get('page', 1)
@@ -101,6 +132,9 @@ def json_user_billing_view(request, id):
 
 
 # COMMISION PROFILE
+@login_required
+@user_is_agen
+@user_is_related_agen
 def json_user_commision_view(request, id):
     data = dict()
     page = request.GET.get('page', 1)
@@ -129,60 +163,10 @@ def json_user_commision_view(request, id):
     return JsonResponse(data)
 
 
-# COMMISION CHART
-def json_user_commision_chart(request, id):
-    profile_obj = get_object_or_404(Profile, pk=id)
-    
-    commision_objs = CommisionRecord.objects.select_related(
-        'instansale_trx', 'ppobsale_trx'
-    ).filter(
-        agen = request.user
-    ).filter(
-        Q(instansale_trx__create_by__profile__id=profile_obj.id) | Q(ppobsale_trx__create_by__profile__id=profile_obj.id)
-    ).annotate(
-        day = TruncDate('timestamp')
-    ).values('day').annotate(
-        d = Sum(F('debit') - F('credit')),
-    ).values('day', 'd').order_by()
-
-    dataset = list(commision_objs)
-    data_in_date = dict()
-
-    for i in dataset :
-        data_in_date[i['day']] = int(i['d'])
-
-    sort_days = sorted(list(data_in_date.keys()))
-
-    chart = {
-        'tooltip': {
-            'style': {
-                'width': '200px'
-            },
-            'valueDecimals': 1,
-            'shared': True
-        },
-        'title': {'text': 'Commision Of {} Sales'.format(profile_obj.user.first_name.title())},
-        'rangeSelector': {
-            'selected': 0
-        },
-
-        'yAxis': {
-            'title': {
-                'text': ''
-            }
-        },
-
-        'series': [{
-            'name': 'Commision',
-            'data': list(map(lambda x: [(int(x.strftime('%s'))+25200)*1000, data_in_date[x]], sort_days)),
-            'id': 'dataseries'
-            },]
-    }
-    
-    return JsonResponse(chart)
-
-
 # LOAN PROFILE
+@login_required
+@user_is_agen
+@user_is_related_agen
 def json_user_loan_view(request, id):
     data = dict()
     page = request.GET.get('page', 1)

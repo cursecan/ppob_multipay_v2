@@ -11,6 +11,5 @@ urlpatterns = [
 
     path('api/billing-profile-<int:id>/', views.json_user_billing_view, name='json_billing_profile'),
     path('api/commision-profile-<int:id>/', views.json_user_commision_view, name='json_commision_profile'),
-    path('api/commision-chart-<int:id>/', views.json_user_commision_chart, name='json_commision_chart'),
     path('api/loan-profile-<int:id>/', views.json_user_loan_view, name='json_loan_profile'),
 ]

@@ -1,4 +1,5 @@
 {% extends 'dashboard/base.html' %}
+{% load humanize %}
 
 {% block title %}
     Dashboard | Warungid - Serasa Warung Milik Sendiri
@@ -6,10 +7,71 @@
 
 {% block dash_content %}
 <div class="ui fluid container">
-    <div class="ui stackable grid">
+    <div class="ui stackable horizontally padded grid">
+        <div class="row">
+            <div class="three wide column">
+                <div class="ui inverted teal segment">
+                    <div class="ui tiny inverted statistic">
+                        <div class="label">Saldo</div>
+                        <div class="value">{{ user.profile.wallet.get_saldo|floatformat:0|intcomma }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="three wide column">
+                <div class="ui inverted orange segment">
+                    <div class="ui tiny inverted statistic">
+                        <div class="label">Limit</div>
+                        <div class="value">{{ user.profile.wallet.limit|floatformat:0|intcomma }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="three wide column">
+                <div class="ui inverted grey segment">
+                    <div class="ui tiny inverted statistic">
+                        <div class="label">Loan</div>
+                        <div class="value">{{ user.profile.wallet.loan|floatformat:0|intcomma }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="column">
-                <!-- Content -->
+                <div class="ui top attached secondary menu">
+                    <div class="item header">Top 10 Sales</div>
+                    <div class="right menu">
+                        <a href="" class="item active">View all</a>
+                        <div class="field item">
+                            <div class="ui input">
+                                <input type="text" placeholder="Search...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="ui bottom attached small striped table">
+                    <tbody>
+                        {% for bill in bill_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a>{{ bill.get_trx.code }}</a>
+                                <p>Pembelian {{ bill.get_trx.product.product_name|title }}</p>
+                            </td>
+                            <td>
+                                {{ bill.get_trx.customer }}
+                                <p>
+                                    S/N {{ bill.get_api_trx.sn|default:'-' }} <i style="color:coral">{{ bill.get_api_status|title }}</i>
+                                </p>
+                            </td>
+                            <td>
+                                {{ bill.credit|floatformat:0|intcomma }}
+                            </td>
+                            <td class="right aligned">
+                                {{ bill.timestamp }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
