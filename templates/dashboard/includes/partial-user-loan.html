@@ -1,0 +1,12 @@
+{% load humanize %}
+
+{% for i in loan_list %}
+<tr>
+    <td>{{ i.trx }}</td>
+    <td>{{ i.get_loan_residu }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td>Empty</td>
+</tr>
+{% endfor %}

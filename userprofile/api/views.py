@@ -47,6 +47,17 @@ class SignUpApiView(CreateAPIView):
     permission_classes = [AllowAny]
 
 
+class AgenRegistUserApiView(CreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = CustomSignupSerializer
+
+    def get_serializer_context(self, *args, **kwargs):
+        context = super().get_serializer_context(*args, **kwargs)
+        context['user'] = self.request.user
+        return context
+
+
+
 class UpdateLimitApiView(UpdateAPIView):
     serializer_class = WalletSerializer
     lookup_url_kwarg = 'id'

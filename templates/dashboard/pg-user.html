@@ -1,0 +1,39 @@
+{% extends 'dashboard/base.html' %}
+{% load humanize %}
+
+{% block title %}
+    Members | Warungid
+{% endblock %}
+
+{% block dash_content %}
+<div class="ui fluid container">
+    <div class="ui stackable horizontally padded grid">
+        <div class="row">
+            <div class="column">
+                <table class="ui small table">
+                    {% for profile in profile_list %}
+                    <tr onclick="window.location.href='{% url 'dashboard:profile' profile.id %}'">
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a>{{ profile.get_username }}</a> <br>{{ profile.get_fullname|title}}
+                        </td>
+                        <td>{{ profile.ponsel|default:'-' }}</td>
+                        <td>
+                            {% if profile.user.is_active %}
+                            <i class="green check icon"></i>
+                            {% else %}
+                            <i class="red close icon"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ profile.get_user_type_display }}</td>
+                        <td>{{ profile.wallet.get_saldo|floatformat:0|intcomma }}</td>
+                        <td>{{ profile.wallet.commision|floatformat:0|intcomma }}</td>
+                        <td>{{ profile.wallet.loan|floatformat:0|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

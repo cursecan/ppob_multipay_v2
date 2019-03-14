@@ -1,0 +1,46 @@
+{% extends 'dashboard/base.html' %}
+{% load humanize %}
+
+{% block title %}
+    Sales | Warungid
+{% endblock %}
+
+{% block dash_content %}
+<div class="ui fluid container">
+    <div class="ui stackable horizontally padded grid">
+        <div class="row">
+            <div class="column">
+                <div class="ui vertical segment">
+                    <form action="" class="ui form">
+                        <div class="field">
+                            <div class="ui input">
+                                <input type="text" style="border-radius:20px" placeholder="Search...">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <table class="ui small table">
+                    <tbody>
+                        {% for sale in bill_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a>{{ sale.get_trx.code }}</a>
+                                <p>Pembelian {{ sale.get_trx.product.product_name|title }} harga Rp {{ sale.credit|floatformat:0|intcomma }}</p>
+                                <p><i>{{ sale.get_trx.customer }} S/N {{ sale.get_api_trx.ns|default:'-' }} <span style="color:tomato">{{ sale.get_api_status|title }}</span></i></p>
+                            </td>
+                            <td>{{ sale.credit|floatformat:0|intcomma }}</td>
+                            <td>{{ sale.timestamp }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

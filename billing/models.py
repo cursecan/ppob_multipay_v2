@@ -73,6 +73,14 @@ class CommisionRecord(CommonBase):
         self.balance = self.agen.profile.wallet.commision + self.debit - self.credit
         super(CommisionRecord, self).save(*args, **kwargs)
 
+    def get_trx(self):
+        if self.instansale_trx:
+            return self.instansale_trx
+        elif self.ppobsale_trx:
+            return self.ppobsale_trx
+        else:
+            return None
+            
 
 class LoanRecord(CommonBase):
     LOAN = 'LO'

@@ -15,24 +15,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import url
-
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_jwt.views import (
     obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 )
 
 from core import views as core_views
+from dashboard import views as dashboard_views
 
 urlpatterns = [
+    path('', dashboard_views.index, name='home'),
+    path('login/', LoginView.as_view(template_name='registration/custom-login.html'), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
     path('activate/<slug:uidb64>/<slug:token>/', core_views.activate, name='activate'),
     path('activate-success/', core_views.activate_success, name='activate_success'),
     path('jwt-api-token-auth/', obtain_jwt_token),
     path('jwt-api-token-refresh/', refresh_jwt_token),
     path('jwt-api-token-verify/', verify_jwt_token),
     path('admin/', admin.site.urls),
+    path('dashboard/', include('dashboard.urls')),
     path('api/profile/', include('userprofile.api.urls')),
     path('api/product/', include('product.api.urls')),
     path('api/transaction/', include('transaction.api.urls')),
@@ -42,3 +47,4 @@ urlpatterns = [
 
 if not settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

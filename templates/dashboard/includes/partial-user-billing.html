@@ -1,0 +1,12 @@
+{% load humanize %}
+
+{% for sale in bill_list %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+    <td>
+        <a>{{ sale.get_trx }}</a>
+        <p>Pembelian {{ sale.get_trx.product|title }} dengan harga Rp {{ sale.credit|floatformat:0|intcomma }}.</p>
+        <p><i>S/N {{ sale.get_api_trx.sn|default:'-' }} <span style="color:coral">{{ sale.get_api_status|title }}</span></i></p>
+    </td>
+</tr>
+{% endfor %}

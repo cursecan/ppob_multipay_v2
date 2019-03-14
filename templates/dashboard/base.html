@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    {% include 'header.html' %}
+    <div class="ui vertical segment">
+        {% block dash_content %}
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% load humanize %}
+
+{% for i in commision_list %}
+<tr>
+    <td>
+        <a>{{ i.get_trx.code }}</a>
+        <p>{{ i.get_trx.product }}</p>
+    </td>
+    <td class="right aligned">{{ i.debit|floatformat:0|intcomma }} / {{ i.balance|floatformat:0|intcomma }}</td>
+    <td>{{ i.get_trx.timestamp }}</td>
+</tr>
+{% endfor %}

@@ -130,6 +130,18 @@ class CustomSignupSerializer(SimpleSignUpSerializer, serializers.ModelSerializer
             'user'
         ]
 
+    def validate(self, data):
+        super(CustomSignupSerializer, self).validate(data)
+        agen = self.context.get('user', None)
+
+        # Only agen input
+        if agen:
+            if agen.profile.user_type != 2:
+                raise serializers.ValidationError({
+                    'error': 'Permision for agen only.'
+                })
+
+        return data
 
     def create(self, validated_data):
         email = validated_data.get('email')
@@ -138,10 +150,18 @@ class CustomSignupSerializer(SimpleSignUpSerializer, serializers.ModelSerializer
         ponsel = validated_data.get('ponsel')
         password = validated_data.get('password')
 
+        agen = self.context.get('user', None)
+
         user_obj = User.objects.create_user(
             email, email, password, first_name=first_name, last_name=last_name, is_active=False
         )
         user_obj.profile.ponsel = ponsel
+
+        # Only agen input
+        if agen:
+            user_obj.profile.agen = agen
+            user_obj.profile.user_type = 1
+
         user_obj.profile.save()
 
         return user_obj.profile

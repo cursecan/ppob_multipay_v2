@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+Login | Warungid
+{% endblock %}
+
+{% block content %}
+<div class="ui fluid container">
+    <div class="ui stackable centered middle aligned grid">
+        <div class="row"  style="min-height:540px">
+            <div class="five wide column">
+                <form action="" method="post" class="ui large form">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="user icon"></i>
+                            {% render_field form.username placeholder="Email" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="key icon"></i>
+                            {% render_field form.password placeholder="Password" %}
+                        </div>
+                    </div>
+                    <div class="equal width fields">
+                        <div class="field">
+                            <button class="ui orange fluid large button">Login</button>
+                        </div>
+                        <div class="field">
+                            <button class="ui teal fluid large button" type="button">Registration</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{%  endblock %}
