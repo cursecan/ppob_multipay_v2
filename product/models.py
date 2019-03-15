@@ -21,6 +21,7 @@ class Operator(CommonBase):
     code = models.CharField(max_length=20, unique=True)
     operator_name = models.CharField(max_length=100)
     group = models.ManyToManyField(Group, through='Product')
+    hint = models.CharField(max_length=200, blank=True)
 
     class Meta:
         ordering = [

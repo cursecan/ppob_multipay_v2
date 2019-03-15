@@ -10,7 +10,7 @@ class OperatorSerializer(serializers.ModelSerializer):
         model = Operator
         fields = [
             'id',
-            'code', 'operator_name'
+            'code', 'operator_name', 'hint'
         ]
 
 class GroupSerializer(serializers.ModelSerializer):
