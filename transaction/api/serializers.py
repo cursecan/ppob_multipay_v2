@@ -146,10 +146,17 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
                     raise serializers.ValidationError({
                         'error': 'User loan on limit.'
                     })
-                if user_obj.profile.agen.profile.wallet.saldo < unprice:
+
+                # User is agen self
+                if user_obj == user_obj.profile.agen:
                     raise serializers.ValidationError({
-                        'error': 'Saldo agen not enough.'
+                        'error': 'Saldo user not enough.'
                     })
+                else:
+                    if user_obj.profile.agen.profile.wallet.saldo < unprice:
+                        raise serializers.ValidationError({
+                            'error': 'Saldo agen not enough.'
+                        })
             else :
                 raise serializers.ValidationError({
                     'error': 'Related agen not found.'
@@ -224,10 +231,17 @@ class InstanSaleCustomSerializer(InstanSaleSerializer):
                     raise serializers.ValidationError({
                         'error': 'User loan on limit.'
                     })
-                if user_obj.profile.agen.profile.wallet.saldo < unprice:
+
+                # User is agen self
+                if user_obj == user_obj.profile.agen:
                     raise serializers.ValidationError({
-                        'error': 'Saldo agen not enough.'
+                        'error': 'Saldo user not enough.'
                     })
+                else:
+                    if user_obj.profile.agen.profile.wallet.saldo < unprice:
+                        raise serializers.ValidationError({
+                            'error': 'Saldo agen not enough.'
+                        })
             else :
                 raise serializers.ValidationError({
                     'error': 'Related agen not found.'
