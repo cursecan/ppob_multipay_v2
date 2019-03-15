@@ -30,10 +30,13 @@ def get_pagination(obj, n=10, page=1):
 @login_required
 def index(request):
     bill_objs = BillingRecord.objects.filter(
+        Q(user__profile__agen = request.user) | Q(user=request.user)
+    ).filter(
         Q(instansale_trx__isnull=False) | Q(ppobsale_trx__isnull=False)
     )
+    
     content = {
-        'bill_list': bill_objs[:10]
+        'bill_list': bill_objs[:5]
     }
     return render(request, 'dashboard/index.html', content)
 
@@ -42,17 +45,25 @@ def index(request):
 @login_required
 def sale_view(request):
     page = request.GET.get('page', None)
+    q = request.GET.get('q', None)
 
     bill_objs = BillingRecord.objects.filter(
-        sequence = 1
+        Q(user__profile__agen = request.user) | Q(user=request.user)
     ).filter(
         Q(instansale_trx__isnull=False) | Q(ppobsale_trx__isnull=False) 
     )
 
+    # Search value
+    if q:
+        bill_objs = bill_objs.filter(
+            Q(instansale_trx__customer__contains=q) | Q(ppobsale_trx__customer__contains=q)
+        )
+
     bill_list = get_pagination(bill_objs, page=page)
 
     content = {
-        'bill_list': bill_list
+        'bill_list': bill_list,
+        'q': q
     }
     return render(request, 'dashboard/pg-sale.html', content)
 

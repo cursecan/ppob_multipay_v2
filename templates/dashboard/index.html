@@ -36,15 +36,16 @@
         </div>
         <div class="row">
             <div class="column">
-                <div class="ui top attached secondary menu">
-                    <div class="item header">Top 10 Sales</div>
+                <div class="ui top attached inverted teal secondary menu">
+                    <div class="item header">Recent 5 Sales</div>
                     <div class="right menu">
-                        <a href="" class="item active">View all</a>
-                        <div class="field item">
-                            <div class="ui input">
-                                <input type="text" placeholder="Search...">
+                        <a href="#" onclick="window.location.href='{% url 'dashboard:sale_list' %}'" class="item">View all</a>
+                        <form action="{% url 'dashboard:sale_list' %}" class="ui form item">
+                            <div class="ui icon input">
+                                <input name="q" type="text" placeholder="Search..." style="border-radius:20px" >
+                                <i class="search link icon"></i>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <table class="ui bottom attached small striped table">
@@ -65,6 +66,7 @@
                             <td>
                                 {{ bill.credit|floatformat:0|intcomma }}
                             </td>
+                            <td>{{ bill.user }}</td>
                             <td class="right aligned">
                                 {{ bill.timestamp }}
                             </td>
@@ -76,4 +78,23 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function() {
+            var conten = [
+                {
+                    'title': 'Search for X',
+                    'description': 'Descript somethings.',
+                    'url': 'http://google.com/{query}'
+                }
+            ]
+            $('.ui.search').search({
+                source: conten,
+                searchFields: ['title'],
+                fullTextSearch: false
+            });
+        });
+    </script>
 {% endblock %}
