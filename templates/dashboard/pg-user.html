@@ -10,14 +10,16 @@
     <div class="ui stackable horizontally padded grid">
         <div class="row">
             <div class="column">
-                <table class="ui small table">
+                <div class="ui top attached inverted secondary teal menu">
+                    <div class="item header">Members</div>
+                </div>
+                <table class="ui small bottom attached table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>User</th>
                             <th>Ponsel</th>
                             <th>Active</th>
-                            <th>Type</th>
                             <th>Saldo</th>
                             <th>Commision</th>
                             <th>Loan</th>
@@ -26,11 +28,11 @@
                     </thead>
                     {% for profile in profile_list %}
                     <tr onclick="window.location.href='{% url 'dashboard:profile' profile.id %}'">
-                        <td>{{ forloop.counter }}</td>
+                        <td>{{ profile_list.start_index|add:forloop.counter0 }}</td>
                         <td>
                             <a>{{ profile.get_username }}</a> <br>{{ profile.get_fullname|title}}
                         </td>
-                        <td>{{ profile.ponsel|default:'-' }}</td>
+                        <td>{{ profile.get_hidden_ponsel|default:'-' }}</td>
                         <td>
                             {% if profile.user.is_active %}
                             <i class="green check icon"></i>
@@ -38,7 +40,6 @@
                             <i class="red close icon"></i>
                             {% endif %}
                         </td>
-                        <td>{{ profile.get_user_type_display }}</td>
                         <td>{{ profile.wallet.get_saldo|floatformat:0|intcomma }}</td>
                         <td>{{ profile.wallet.commision|floatformat:0|intcomma }}</td>
                         <td>{{ profile.wallet.loan|floatformat:0|intcomma }}</td>
@@ -46,6 +47,39 @@
                     </tr>
                     {% endfor %}
                 </table>
+
+                {% if profile_list.has_other_pages %}
+                    <div class="ui pagination menu js-page">
+                        {% if profile_list.has_previous %}
+                            <a href="?page={{ profile_list.previous_page_number }}" class="item">&lt;</a>
+                        {% else %}
+                            <div class="item disabled">&lt;</div>
+                        {% endif %}            
+
+                        {% if profile_list.number|add:'-4' > 1 %}
+                        <a href="?page={{ profile_list.number|add:'-5' }}" class="item">&hellip;</a>
+                        {% endif %}
+
+                        {% for i in profile_list.paginator.page_range %}
+                            {% if profile_list.number == i %}
+                                <div class="item active ">{{ i }}</div>
+                            {% elif i > profile_list.number|add:'-5' and i < profile_list.number|add:'5' %}
+                                <a href="?page={{ i }}" class="item">{{ i }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if profile_list.paginator.num_pages > profile_list.number|add:'4' %}
+                        <a href="?page={{ profile_list.number|add:'5' }}" class="item">&hellip;</a>
+                        {% endif %}
+
+                        {% if profile_list.has_next %}
+                            <a href="?page={{ profile_list.next_page_number }}" class="item">&gt;</a>
+                        {% else %}
+                            <div class="item disabled">&gt;</div>
+                        {% endif %}   
+                    </div>
+                {% endif %}
+
             </div>
         </div>
     </div>

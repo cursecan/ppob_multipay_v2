@@ -140,7 +140,8 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
 
         if user_obj.profile.wallet.get_saldo() <  inquery_obj.price:
             unprice = inquery_obj.price - user_obj.profile.wallet.get_saldo()
-            if user_obj.profile.agen.profile.user_type == 2:
+            # JIKA USER PUNYA AGEN
+            if user_obj.profile.agen.profile.user_type == 2: #2 = AGEN
                 if user_obj.profile.wallet.limit < user_obj.profile.wallet.loan + unprice:
                     raise serializers.ValidationError({
                         'error': 'User loan on limit.'

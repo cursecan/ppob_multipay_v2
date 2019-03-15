@@ -80,7 +80,7 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
                     ppobsale_trx = instance,
                     user = instance.create_by,
                     agen = instance.create_by.profile.agen,
-                    debit = instance.product.price - instance.create_by.profile.wallet.get_saldo()
+                    debit = instance.price - instance.create_by.profile.wallet.get_saldo()
                 )
 
             # Commision record

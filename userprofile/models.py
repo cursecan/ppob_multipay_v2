@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from core.models import CommonBase
 
-import uuid
+import uuid, re
 
 class Profile(CommonBase):
     MEMBER = 1
@@ -39,6 +39,12 @@ class Profile(CommonBase):
 
     def get_fullname(self):
         return self.user.first_name + ' ' + self.user.last_name
+
+    def get_hidden_ponsel(self):
+        try:
+            return re.sub(r'\d{3}$', 'XXX', self.ponsel)
+        except:
+            return None
 
 
 class Wallet(CommonBase):

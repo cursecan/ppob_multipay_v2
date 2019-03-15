@@ -3,10 +3,13 @@
 
 {% block content %}
     {% include 'header.html' %}
-    <div class="ui vertical segment">
-        <div class="ui secondary small menu">
+    <div class="ui container">
+        <div class="ui text menu">
             <div class="right menu">
-                <a href="" class="item"><i class="users icon"></i> Members</a>
+                {% if request.user.is_superuser %}
+                    <a href="" class="item"><i class="user secret icon"></i> Agen</a>
+                {% endif %}
+                <a href="{% url 'dashboard:member_list' %}" class="item"><i class="users icon"></i> Members</a>
             </div>
         </div>
     </div>
