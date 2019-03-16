@@ -137,9 +137,12 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
             })
 
         product_obj = product_objs.get()
+        price_product = product_obj.price
+        if price_product == 0 :
+            price_product = inquery_obj.responseppobsale.get_price()
 
-        if user_obj.profile.wallet.get_saldo() <  inquery_obj.responseppobsale.get_price():
-            unprice = inquery_obj.responseppobsale.get_price() - user_obj.profile.wallet.get_saldo()
+        if user_obj.profile.wallet.get_saldo() <  price_product:
+            unprice = price_product - user_obj.profile.wallet.get_saldo()
             # JIKA USER PUNYA AGEN
             if user_obj.profile.agen.profile.user_type == 2: #2 = AGEN
                 if user_obj.profile.wallet.limit < user_obj.profile.wallet.loan + unprice:
