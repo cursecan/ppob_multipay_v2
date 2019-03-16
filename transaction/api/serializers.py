@@ -138,8 +138,8 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
 
         product_obj = product_objs.get()
 
-        if user_obj.profile.wallet.get_saldo() <  inquery_obj.price:
-            unprice = inquery_obj.price - user_obj.profile.wallet.get_saldo()
+        if user_obj.profile.wallet.get_saldo() <  inquery_obj.responseppobsale.get_price():
+            unprice = inquery_obj.responseppobsale.get_price() - user_obj.profile.wallet.get_saldo()
             # JIKA USER PUNYA AGEN
             if user_obj.profile.agen.profile.user_type == 2: #2 = AGEN
                 if user_obj.profile.wallet.limit < user_obj.profile.wallet.loan + unprice:
@@ -153,7 +153,7 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
                         'error': 'Saldo user not enough.'
                     })
                 else:
-                    if user_obj.profile.agen.profile.wallet.saldo < unprice:
+                    if user_obj.profile.agen.profile.wallet.get_saldo() < unprice:
                         raise serializers.ValidationError({
                             'error': 'Saldo agen not enough.'
                         })
@@ -238,7 +238,7 @@ class InstanSaleCustomSerializer(InstanSaleSerializer):
                         'error': 'Saldo user not enough.'
                     })
                 else:
-                    if user_obj.profile.agen.profile.wallet.saldo < unprice:
+                    if user_obj.profile.agen.profile.wallet.get_saldo() < unprice:
                         raise serializers.ValidationError({
                             'error': 'Saldo agen not enough.'
                         })
