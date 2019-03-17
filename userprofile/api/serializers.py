@@ -34,6 +34,10 @@ class UserSerializer(serializers.ModelSerializer):
         read_only=True,
         source='profile.get_hidden_ponsel'
     )
+    user_type = serializers.CharField(
+        read_only=True,
+        source='profile.get_user_type_display'
+    )
 
     class Meta:
         model = User
@@ -41,7 +45,8 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'guid',
             'email', 'ponsel',
             'first_name', 'last_name',
-            'saldo', 'commision', 'limit', 'loan', 'init_loan'
+            'saldo', 'commision', 'limit', 'loan', 'init_loan',
+            'user_type'
         ]
 
 

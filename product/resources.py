@@ -22,11 +22,6 @@ class GroupResource(resources.ModelResource):
 
 
 class OperatorResource(resources.ModelResource):
-    # group = resources.Field(
-    #     attribute='group', column_name='group', 
-    #     widget=ManyToManyWidget(Group, field='code')
-    # )
-
     class Meta:
         model = Operator
         fields = [
