@@ -39,6 +39,11 @@ class UserSerializer(serializers.ModelSerializer):
         source='profile.get_user_type_display'
     )
 
+    agen = serializers.CharField(
+        read_only=True,
+        source='profile.agen.profile.get_fullname'
+    )
+
     class Meta:
         model = User
         fields = [
@@ -46,7 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email', 'ponsel',
             'first_name', 'last_name',
             'saldo', 'commision', 'limit', 'loan', 'init_loan',
-            'user_type'
+            'user_type', 'agen'
         ]
 
 
