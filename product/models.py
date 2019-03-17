@@ -59,8 +59,8 @@ class Product(CommonBase):
     operator = models.ForeignKey(Operator, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     nominal = models.PositiveIntegerField(default=0)
-    price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    commision = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    price = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    commision = models.DecimalField(max_digits=12, decimal_places=0, default=0)
     is_active = models.BooleanField(default=False)
 
     class Meta:

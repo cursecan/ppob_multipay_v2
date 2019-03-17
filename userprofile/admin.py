@@ -1,4 +1,5 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
 
@@ -6,13 +7,35 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
 from .models import (
-    Profile, Wallet
+    Profile, Wallet, UploadUser
+)
+
+from .resources import (
+    WalletResource,
+    UploadUserResource,
 )
 
 class WalletInline(admin.StackedInline):
     model = Wallet
     min = 1
     max = 1
+
+
+@admin.register(UploadUser)
+class UploadUserAdmin(ImportExportModelAdmin):
+    list_display = [
+        'username', 'first_name', 'last_name'
+    ]
+    resource_class = UploadUserResource
+
+
+@admin.register(Wallet)
+class WalletAdmin(ImportExportModelAdmin):
+    resource_class = WalletResource
+    list_display = [
+        'profile', 'saldo', 'limit', 'loan', 'init_loan', 'commision'
+    ]
+
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -37,7 +60,7 @@ class ProfileAdmin(admin.ModelAdmin):
         return instance.wallet.commision
 
     def display_loan(self, instance):
-        return instance.wallet.loan
+        return '{} + {}'.format(instance.wallet.loan, instance.wallet.init_loan)
 
     def display_limit(self, instance):
         return instance.wallet.limit

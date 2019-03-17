@@ -25,7 +25,7 @@ class Profile(CommonBase):
 
     class Meta:
         ordering = [
-            '-timestamp'
+            'user__username'
         ]
 
     def __str__(self):
@@ -49,10 +49,11 @@ class Profile(CommonBase):
 
 class Wallet(CommonBase):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    saldo = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    commision = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    loan = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    limit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    saldo = models.DecimalField(max_digits=15, decimal_places=0, default=0)
+    commision = models.DecimalField(max_digits=15, decimal_places=0, default=0)
+    loan = models.DecimalField(max_digits=15, decimal_places=0, default=0)
+    limit = models.DecimalField(max_digits=15, decimal_places=0, default=0)
+    init_loan = models.DecimalField(max_digits=15, decimal_places=0, default=0)
 
     class Meta:
         ordering = [
@@ -66,3 +67,13 @@ class Wallet(CommonBase):
         if self.saldo < 0:
             return 0
         return self.saldo
+
+
+class UploadUser(models.Model):
+    username = models.EmailField(max_length=100, unique=True)
+    first_name = models.CharField(max_length=200, blank=True)
+    last_name = models.CharField(max_length=200, blank=True)
+    password = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.username

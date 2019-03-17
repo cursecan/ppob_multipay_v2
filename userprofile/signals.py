@@ -8,7 +8,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 
 from .models import (
-    Profile, Wallet
+    Profile, Wallet, UploadUser
 )
 
 
@@ -28,8 +28,20 @@ def initial_user_profile(sender, instance, created, **kwargs):
         subject = 'Warungid Account Activation'
         message = render_to_string('core/account_activation_email.html', {
             'user': instance,
-            'domain': 'http://app.warungid.com',
+            'domain': 'http://warungid.com',
             'uid': urlsafe_base64_encode(force_bytes(instance.pk)).decode(),
             'token': account_activation_token.make_token(instance),
         })
         instance.email_user(subject, message)
+
+
+@receiver(post_save, sender=UploadUser)
+def add_bulk_user(sender, instance, created, **kwargs):
+    if created:
+        User.objects.create_user(
+            username = instance.username,
+            email = instance.username,
+            password= instance.password,
+            first_name = instance.first_name,
+            last_name = instance.last_name
+        )

@@ -8,27 +8,31 @@ from userprofile.models import (
 
 class UserSerializer(serializers.ModelSerializer):
     saldo = serializers.DecimalField(
-        max_digits=12, decimal_places=2, 
+        max_digits=15, decimal_places=0, 
         source='profile.wallet.get_saldo', read_only=True
     )
     commision = serializers.DecimalField(
-        max_digits=12, decimal_places=2, 
+        max_digits=15, decimal_places=0, 
         source='profile.wallet.commision', read_only=True
     )
     limit = serializers.DecimalField(
-        max_digits=12, decimal_places=2, 
+        max_digits=15, decimal_places=0, 
         source='profile.wallet.limit', read_only=True
     )
     loan = serializers.DecimalField(
-        max_digits=12, decimal_places=2, 
+        max_digits=15, decimal_places=0, 
         source='profile.wallet.loan', read_only=True
+    )
+    init_loan = serializers.DecimalField(
+        max_digits=15, decimal_places=0, 
+        source='profile.wallet.init_loan', read_only=True
     )
     guid = serializers.CharField(
         source='profile.guid', read_only=True
     )
     ponsel = serializers.CharField(
         read_only=True,
-        source='profile.ponsel'
+        source='profile.get_hidden_ponsel'
     )
 
     class Meta:
@@ -37,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'guid',
             'email', 'ponsel',
             'first_name', 'last_name',
-            'saldo', 'commision', 'limit', 'loan',
+            'saldo', 'commision', 'limit', 'loan', 'init_loan'
         ]
 
 
@@ -108,6 +112,19 @@ class SimpleSignUpSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         ponsel = data.get('ponsel')
+
+
+        prefix_ponsel = ponsel[:2]
+        if prefix_ponsel != '08':
+            raise serializers.ValidationError({
+                'error': 'Ponsel must begin with 08 prefix.'
+            })
+
+        if len(ponsel) < 10 or len(ponsel) > 13:
+            raise serializers.ValidationError({
+                'error': 'Ponsel length must between 10 and 13 character'
+            })
+            
         if User.objects.filter(username=email).exists():
             raise serializers.ValidationError({
                 'error': 'This email address already taken.' 
@@ -148,9 +165,9 @@ class CustomSignupSerializer(SimpleSignUpSerializer, serializers.ModelSerializer
         return data
 
     def create(self, validated_data):
-        email = validated_data.get('email')
-        first_name = validated_data.get('first_name')
-        last_name = validated_data.get('last_name')
+        email = validated_data.get('email').lower()
+        first_name = validated_data.get('first_name').lower()
+        last_name = validated_data.get('last_name').lower()
         ponsel = validated_data.get('ponsel')
         password = validated_data.get('password')
 

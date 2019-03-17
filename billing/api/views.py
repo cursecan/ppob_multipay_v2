@@ -30,7 +30,7 @@ class BillingRecordTransactionApiListView(ListAPIView):
                 )
             else :
                 queryset = queryset.filter(
-                    user = self.request.user.profile.agen
+                    user__profile__agen = self.request.user
                 )
         return queryset
 

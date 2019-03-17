@@ -22,8 +22,8 @@ class PpobSale(CommonBase):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ppob_product')
     product_code = models.CharField(max_length=30, blank=True)
     nominal = models.PositiveIntegerField(default=0)
-    price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    commision = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    price = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    commision = models.DecimalField(max_digits=12, decimal_places=0, default=0)
     create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1, related_name='ppob_create_user')
     closed = models.BooleanField(default=False)
 
@@ -96,8 +96,8 @@ class InstanSale(CommonBase):
     customer = models.CharField(max_length=30)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='instan_product')
     product_code = models.CharField(max_length=30, blank=True)
-    price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    commision = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    price = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    commision = models.DecimalField(max_digits=12, decimal_places=0, default=0)
     create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1, related_name='instan_create_user')
     closed = models.BooleanField(default=False)
 
