@@ -46,6 +46,11 @@ class Profile(CommonBase):
         except:
             return None
 
+    def get_usertype(self):
+        if not self.user.is_superuser:
+            return self.get_user_type.display()
+        return 'ADMIN'
+
 
 class Wallet(CommonBase):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)

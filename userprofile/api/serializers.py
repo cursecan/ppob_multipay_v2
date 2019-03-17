@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
     user_type = serializers.CharField(
         read_only=True,
-        source='profile.get_user_type_display'
+        source='profile.get_usertype'
     )
 
     agen = serializers.CharField(
