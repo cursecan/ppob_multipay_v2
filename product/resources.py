@@ -22,18 +22,18 @@ class GroupResource(resources.ModelResource):
 
 
 class OperatorResource(resources.ModelResource):
-    group = resources.Field(
-        attribute='group', column_name='group', 
-        widget=ManyToManyWidget(Group, field='code')
-    )
+    # group = resources.Field(
+    #     attribute='group', column_name='group', 
+    #     widget=ManyToManyWidget(Group, field='code')
+    # )
 
     class Meta:
         model = Operator
         fields = [
-            'code', 'operator_name', 'group'
+            'code', 'operator_name'
         ]
         export_order = [
-            'code', 'operator_name', 'group'
+            'code', 'operator_name'
         ]
         import_id_fields = ['code']
         skip_unchanged = True
