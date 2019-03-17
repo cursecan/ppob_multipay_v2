@@ -32,6 +32,13 @@ class BillingRecordTransactionApiListView(ListAPIView):
                 queryset = queryset.filter(
                     user__profile__agen = self.request.user
                 )
+
+        uname = self.request.GET.get('uname', None)
+        if uname:
+            queryset = queryset.filter(
+                user__username=uname
+            )
+
         return queryset
 
 
