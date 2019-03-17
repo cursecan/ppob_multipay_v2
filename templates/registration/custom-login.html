@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load static %}
 
 {% block title %}
 Login | Warungid
@@ -10,6 +11,9 @@ Login | Warungid
     <div class="ui stackable centered middle aligned grid">
         <div class="row"  style="min-height:540px">
             <div class="five wide column">
+                <div class="ui vertical basic segment" style="margin-bottom:50px">
+                    <img src="{% static 'image/logo2.png' %}" class="ui centered small image" alt="">
+                </div> 
                 <form action="" method="post" class="ui large form">
                     {% csrf_token %}
                     <div class="field">
@@ -33,8 +37,25 @@ Login | Warungid
                         </div>
                     </div>
                 </form>
+                <div id="app" class="ui rights aligned vertical basic segment">
+                    Download aplikasi <a href="">Warungid.com <i class="android icon"></i></a> 
+                </div>
             </div>
         </div>
     </div>
 </div>
 {%  endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{% url 'dashboard:application' %}",
+            dataType: 'json',
+            success: function(data) {
+                $('#app').html(data.html);
+            }
+        })
+    });
+</script>
+{% endblock %}

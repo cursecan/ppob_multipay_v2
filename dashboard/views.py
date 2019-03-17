@@ -13,6 +13,7 @@ from userprofile.models import Profile
 from core.decorators import (
     user_is_agen, user_is_related_agen
 )
+from .models import Application
 
 def get_pagination(obj, n=10, page=1):
     page_list = Paginator(obj, n)
@@ -24,6 +25,18 @@ def get_pagination(obj, n=10, page=1):
         bill_list = page_list.page(page_list.page_range)
 
     return bill_list
+
+
+
+def get_application_view(request):
+    data = dict()
+    app_obj = Application.objects.latest('timestamp')
+    data['html'] = render_to_string(
+        'dashboard/includes/partial-application.html', 
+        {'app': app_obj},
+        request=request
+    ) 
+    return JsonResponse(data)
 
 
 # INDEX
