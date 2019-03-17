@@ -48,7 +48,7 @@ class Profile(CommonBase):
 
     def get_usertype(self):
         if not self.user.is_superuser:
-            return self.get_user_type.display()
+            return self.get_user_type_display()
         return 'ADMIN'
 
 
