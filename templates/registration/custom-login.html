@@ -50,7 +50,7 @@ Login | Warungid
     <script>
         $(document).ready(function() {
             $.ajax({
-                url: "{{ url 'dashboard:application' }}",
+                url: "{% url 'dashboard:application' %}",
                 dataType: 'json',
                 success: function(data) {
                     $('#app').html(data.html);
