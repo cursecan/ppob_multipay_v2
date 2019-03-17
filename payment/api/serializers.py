@@ -138,6 +138,11 @@ class TransferSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'error': 'Valid for its agen or admin only.'
             })
+            
+        if receive_profile.get().user == sender:
+            raise serializers.ValidationError({
+                'error': 'Cannot transfer to self account.'
+            })
 
         if receive_profile.get().wallet.loan != 0:
             raise serializers.ValidationError({
