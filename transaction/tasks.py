@@ -109,26 +109,33 @@ def instansale_tasks(sale_id):
 
             Status.objects.create(instansale=insale_obj, status='IN')
 
+            try :
+                nominal = int(rson.get('NOMINAL', 0))
+            except : 
+                nominal = 0
+
+            res_obj = ResponseInSale.objects.filter(sale=insale_obj).update(
+                kode_produk = rson.get('KODE_PRODUK', ''),
+                waktu = rson.get('WAKTU', ''),
+                no_hp = rson.get('NO_HP', ''),
+                sn = rson.get('SN', ''),
+                nominal = nominal,
+                ref1 = rson.get('REF1', ''),
+                ref2 = rson.get('REF2', ''),
+                status = rson.get('STATUS', ''),
+                ket = rson.get('KET', ''),
+                saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0))
+            )
+
+            # Repeate check transakasi
+            instansale_repeat_response(res_obj.id, creator=res_obj, repeat=120, repeat_until=timezone.now() + datetime.timedelta(minutes=10))
+
+
         r.raise_for_status()
     except :
         pass
         
-    res_obj = ResponseInSale.objects.filter(sale=insale_obj).update(
-        kode_produk = rson.get('KODE_PRODUK', ''),
-        waktu = rson.get('WAKTU', ''),
-        no_hp = rson.get('NO_HP', ''),
-        sn = rson.get('SN', ''),
-        nominal = int(rson.get('NOMINAL', 0)),
-        ref1 = rson.get('REF1', ''),
-        ref2 = rson.get('REF2', ''),
-        status = rson.get('STATUS', ''),
-        ket = rson.get('KET', ''),
-        saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0))
-    )
-
-    # Repeate check transakasi
-    instansale_repeat_response(res_obj.id, creator=res_obj, repeat=120, repeat_until=timezone.now() + datetime.timedelta(minutes=10))
-
+    
 
 @background(schedule=1)
 def ppobsale_tasks(sale_id):
