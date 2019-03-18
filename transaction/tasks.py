@@ -1,5 +1,6 @@
 from background_task import background
 import requests, json
+import datetime
 
 from django.conf import settings
 
@@ -8,9 +9,71 @@ from transaction.models import (
     ResponseInSale, ResponsePpobSale
 )
 
+
 _user = settings.RB_USER
 _pin = settings.RB_PIN
 _link = settings.RB_LINK
+
+
+@background(schedule=60)
+def instansale_repeat_response(res_id):
+    response_insale_objs = ResponseInSale.objects.filter(
+        id = res_id, sale__closed=False
+    )
+    if response_insale_objs.exists():
+        response_insale = response_insale_objs.get()
+
+        payload  = {
+            "method"      : "rajabiller.datatransaksi",
+            "uid"         : _user,
+            "pin"         : _pin,
+            "tgl1"        : "",
+            "tgl2"        : "",
+            "id_transaksi": '123',
+            "id_produk"   : "",
+            "idpel"       : "",
+            "limit"       : ""
+        }
+
+        try :
+            r = requests.post(_link, json.dumps(payload), timeout=15)
+            if r.status_code == requests.codes.ok:
+                rson = r.json()
+
+                # {
+                #     'UID': 'SP118171', 
+                #     'KET': 'Transaksi berhasil', 
+                #     'LIMIT': '', 'IDPEL': '', 'TGL2': '20190318010101', 'PIN': '------', 
+                #     'TGL1': '20190317010101', 'STATUS': '00', 'KODE_PRODUK': '', 
+                #     'RESULT_TRANSAKSI': ['1307083649#20190317202539#S5H#TELKOMSEL SIMPATI / AS 5RB#081315667766#00#Pembelian voucher pulsa S5HX berhasil ke no 081315667766. Kode Voucher: 0041003499597509.#5575#0041003499597509#SUKSES']
+                # }
+
+                try :
+                    data = rson['RESULT_TRANSAKSI'][0]
+                    trx_ref, waktu, code, product, nopel, statcode, info, price, sn, status = data.split('#')
+
+                    try :
+                        price = int(price)
+                    except:
+                        price = 0
+
+                    if statcode == '00' and sn != '':
+                        response_insale_objs.update(
+                            waktu = waktu,
+                            no_hp = nopel,
+                            sn = sn,
+                            status = statcode,
+                            ket = status,
+                            saldo_terpotong = price
+                        )
+                        Status.objects.create(instansale=response_insale.sale, status='CO')
+                except:
+                    pass
+
+        except:
+            pass
+
+
 
 @background(schedule=1)
 def instansale_tasks(sale_id):
@@ -46,7 +109,7 @@ def instansale_tasks(sale_id):
     except :
         pass
         
-    ResponseInSale.objects.filter(sale=insale_obj).update(
+    res_obj = ResponseInSale.objects.filter(sale=insale_obj).update(
         kode_produk = rson.get('KODE_PRODUK', ''),
         waktu = rson.get('WAKTU', ''),
         no_hp = rson.get('NO_HP', ''),
@@ -58,6 +121,9 @@ def instansale_tasks(sale_id):
         ket = rson.get('KET', ''),
         saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0))
     )
+
+    # Repeate check transakasi
+    instansale_repeat_response(res_obj.id, creator=res_obj, repeat=120, repeat_until=datetime.datetime.now() + datetime.timedelta(minutes=10))
 
 
 @background(schedule=1)
@@ -111,14 +177,7 @@ def ppobsale_tasks(sale_id):
         payload['method'] = "rajabiller.paydetail"
         payload['ref2'] = ppob_sale.inquery.responseppobsale.ref2
         payload['nominal'] = ppob_sale.nominal
-        payload['ref3'] = ''
-
-        Status.objects.create(
-            ppobsale = ppob_sale,
-            status = 'IN'
-        )
-        
-
+        payload['ref3'] = ''     
 
     try :
         r = requests.post(
@@ -128,6 +187,10 @@ def ppobsale_tasks(sale_id):
 
         if r.status_code == requests.codes.ok:
             rson = r.json()
+            Status.objects.create(
+                ppobsale = ppob_sale,
+                status = 'IN'
+            )
 
         r.raise_for_status()
     except :
