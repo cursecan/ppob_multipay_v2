@@ -3,6 +3,7 @@ import requests, json
 import datetime
 
 from django.conf import settings
+from django.utils import timezone
 
 from transaction.models import (
     InstanSale, PpobSale, Status,
@@ -22,56 +23,59 @@ def instansale_repeat_response(res_id):
     )
     if response_insale_objs.exists():
         response_insale = response_insale_objs.get()
+        if response_insale.ref2 is not None and response_insale.ref2 != '':
+            h_time = timezone.localtime(response_insale.timestamp) + datetime.timedelta(minutes=10)
+            l_time = h_time + datetime.timedelta(days=-1)
 
-        payload  = {
-            "method"      : "rajabiller.datatransaksi",
-            "uid"         : _user,
-            "pin"         : _pin,
-            "tgl1"        : "",
-            "tgl2"        : "",
-            "id_transaksi": '123',
-            "id_produk"   : "",
-            "idpel"       : "",
-            "limit"       : ""
-        }
+            payload  = {
+                "method"      : "rajabiller.datatransaksi",
+                "uid"         : _user,
+                "pin"         : _pin,
+                "tgl1"        : l_time.strftime('%Y%m%d%H%M%S'),
+                "tgl2"        : h_time.strftime('%Y%m%d%H%M%S'),
+                "id_transaksi": response_insale.ref2,
+                "id_produk"   : "",
+                "idpel"       : "",
+                "limit"       : ""
+            }
 
-        try :
-            r = requests.post(_link, json.dumps(payload), timeout=15)
-            if r.status_code == requests.codes.ok:
-                rson = r.json()
+            try :
+                r = requests.post(_link, json.dumps(payload), timeout=15)
+                if r.status_code == requests.codes.ok:
+                    rson = r.json()
 
-                # {
-                #     'UID': 'SP118171', 
-                #     'KET': 'Transaksi berhasil', 
-                #     'LIMIT': '', 'IDPEL': '', 'TGL2': '20190318010101', 'PIN': '------', 
-                #     'TGL1': '20190317010101', 'STATUS': '00', 'KODE_PRODUK': '', 
-                #     'RESULT_TRANSAKSI': ['1307083649#20190317202539#S5H#TELKOMSEL SIMPATI / AS 5RB#081315667766#00#Pembelian voucher pulsa S5HX berhasil ke no 081315667766. Kode Voucher: 0041003499597509.#5575#0041003499597509#SUKSES']
-                # }
-
-                try :
-                    data = rson['RESULT_TRANSAKSI'][0]
-                    trx_ref, waktu, code, product, nopel, statcode, info, price, sn, status = data.split('#')
+                    # {
+                    #     'UID': 'SP118171', 
+                    #     'KET': 'Transaksi berhasil', 
+                    #     'LIMIT': '', 'IDPEL': '', 'TGL2': '20190318010101', 'PIN': '------', 
+                    #     'TGL1': '20190317010101', 'STATUS': '00', 'KODE_PRODUK': '', 
+                    #     'RESULT_TRANSAKSI': ['1307083649#20190317202539#S5H#TELKOMSEL SIMPATI / AS 5RB#081315667766#00#Pembelian voucher pulsa S5HX berhasil ke no 081315667766. Kode Voucher: 0041003499597509.#5575#0041003499597509#SUKSES']
+                    # }
 
                     try :
-                        price = int(price)
+                        data = rson['RESULT_TRANSAKSI'][0]
+                        trx_ref, waktu, code, product, nopel, statcode, info, price, sn, status = data.split('#')
+
+                        try :
+                            price = int(price)
+                        except:
+                            price = 0
+
+                        if statcode == '00' and sn != '':
+                            response_insale_objs.update(
+                                waktu = waktu,
+                                no_hp = nopel,
+                                sn = sn,
+                                status = statcode,
+                                ket = status,
+                                saldo_terpotong = price
+                            )
+                            Status.objects.create(instansale=response_insale.sale, status='CO')
                     except:
-                        price = 0
+                        pass
 
-                    if statcode == '00' and sn != '':
-                        response_insale_objs.update(
-                            waktu = waktu,
-                            no_hp = nopel,
-                            sn = sn,
-                            status = statcode,
-                            ket = status,
-                            saldo_terpotong = price
-                        )
-                        Status.objects.create(instansale=response_insale.sale, status='CO')
-                except:
-                    pass
-
-        except:
-            pass
+            except:
+                pass
 
 
 
@@ -123,7 +127,7 @@ def instansale_tasks(sale_id):
     )
 
     # Repeate check transakasi
-    instansale_repeat_response(res_obj.id, creator=res_obj, repeat=120, repeat_until=datetime.datetime.now() + datetime.timedelta(minutes=10))
+    instansale_repeat_response(res_obj.id, creator=res_obj, repeat=120, repeat_until=timezone.now() + datetime.timedelta(minutes=10))
 
 
 @background(schedule=1)
