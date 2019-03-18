@@ -6,6 +6,7 @@ from core.tokens import account_activation_token
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 from .models import (
     Profile, Wallet, UploadUser
@@ -25,14 +26,14 @@ def initial_user_profile(sender, instance, created, **kwargs):
         )
 
         # Sending Email
-        # subject = 'Warungid Account Activation'
-        # message = render_to_string('core/account_activation_email.html', {
-        #     'user': instance,
-        #     'domain': 'http://www.warungid.com',
-        #     'uid': urlsafe_base64_encode(force_bytes(instance.pk)).decode(),
-        #     'token': account_activation_token.make_token(instance),
-        # })
-        # instance.email_user(subject, message)
+        subject = 'Warungid Account Activation'
+        message = render_to_string('core/account_activation_email.html', {
+            'user': instance,
+            'domain': 'http://www.warungid.com',
+            'uid': urlsafe_base64_encode(force_bytes(instance.pk)).decode(),
+            'token': account_activation_token.make_token(instance),
+        })
+        send_mail(subject, message, 'no-reply@warungid.com', [instance.email])
 
 
 @receiver(post_save, sender=UploadUser)
