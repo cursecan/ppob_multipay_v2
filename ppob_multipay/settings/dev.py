@@ -7,6 +7,7 @@ DEBUG = False
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'no-reply@warungid.com'
 
 
 # Database
