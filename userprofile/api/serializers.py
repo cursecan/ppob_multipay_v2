@@ -123,6 +123,11 @@ class SimpleSignUpSerializer(serializers.Serializer):
         email = data.get('email')
         ponsel = data.get('ponsel')
 
+        mail, domain = email.split('@')
+        if domain not in ['gmail.com', 'ymail.com', 'rocketmail.com']:
+            raise serializers.ValidationError({
+                'error': 'Unvalid email must google or yahoo mail'
+            })
 
         prefix_ponsel = ponsel[:2]
         if prefix_ponsel != '08':
