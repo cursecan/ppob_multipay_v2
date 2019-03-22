@@ -14,9 +14,9 @@ from .forms import (
 # class InstanSaleAdmin(admin.ModelAdmin):
 #     form = InstanSaleForm
 
-@admin.register(PpobSale)
-class PpobSaleAdmin(admin.ModelAdmin):
-    form = PpobSaleForm
+# @admin.register(PpobSale)
+# class PpobSaleAdmin(admin.ModelAdmin):
+#     form = PpobSaleForm
 
 # @admin.register(Status)
 # class StatusAdmin(admin.ModelAdmin):
@@ -24,14 +24,44 @@ class PpobSaleAdmin(admin.ModelAdmin):
 
 @admin.register(ResponseInSale)
 class ResponseInSaleAdmin(admin.ModelAdmin):
+    search_fields = [
+        'sale__code', 'sale__customer'
+    ]
     list_display = [
-        'sale', 'kode_produk', 'no_hp',
-        'ref2', 'ket', 'saldo_terpotong', 'display_status'
+        'sale', 'display_product', 'display_customer',
+        'ref2', 'ket', 'saldo_terpotong', 'display_status', 'buyer'
     ]
 
     def display_status(self, instance):
         return instance.sale.instansale_status.latest('timestamp')
 
+    def display_product(self, instance):
+        return instance.sale.product.product_name
+
+    def display_customer(self, instance):
+        return instance.sale.customer
+
+    def buyer(self, instance):
+        return instance.sale.create_by
+
 @admin.register(ResponsePpobSale)
 class ResponsePpobSaleAdmin(admin.ModelAdmin):
-    pass
+    search_fields = [
+        'sale__code', 'sale__customer'
+    ]
+    list_display = [
+        'sale', 'display_product', 'display_customer',
+        'ref2', 'ket', 'saldo_terpotong', 'display_status', 'buyer'
+    ]
+
+    def display_status(self, instance):
+        return instance.sale.ppobsale_status.latest('timestamp')
+
+    def display_product(self, instance):
+        return instance.sale.product.product_name
+
+    def display_customer(self, instance):
+        return instance.sale.customer
+
+    def buyer(self, instance):
+        return instance.sale.create_by
