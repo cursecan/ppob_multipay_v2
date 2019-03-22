@@ -25,6 +25,7 @@ class BillingRecord(CommonBase):
     transfer = models.ForeignKey(Transfer, on_delete=models.CASCADE, blank=True, null=True, related_name='billing_transfer')
 
     class Meta:
+        verbose_name = "Billing"
         ordering = [
             '-timestamp'
         ]
@@ -65,6 +66,7 @@ class CommisionRecord(CommonBase):
     ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='commision_ppob_trx')
 
     class Meta:
+        verbose_name = 'Komisi'
         ordering = [
             '-timestamp'
         ]
@@ -102,6 +104,7 @@ class LoanRecord(CommonBase):
     ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_ppob_trx')
 
     class Meta:
+        verbose_name = 'Pinjaman'
         ordering = [
             '-timestamp'
         ]
@@ -124,3 +127,7 @@ class ProfitRecord(CommonBase):
     ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='profit_ppob_trx')
     debit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     credit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = 'Keuntungan'
+        ordering = ['-timestamp']

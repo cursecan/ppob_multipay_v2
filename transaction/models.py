@@ -179,6 +179,7 @@ class ResponseInSale(CommonBase):
     saldo_terpotong = models.PositiveIntegerField(default=0)
 
     class Meta:
+        verbose_name = 'Transaksi Topup'
         ordering = [
             '-timestamp'
         ]
@@ -204,6 +205,7 @@ class ResponsePpobSale(CommonBase):
     url_struk = models.CharField(max_length=200, blank=True)
 
     class Meta:
+        verbose_name = 'Transaksi Ppob'
         ordering = [
             '-timestamp'
         ]
