@@ -117,7 +117,7 @@ def instansale_tasks(sale_id):
             res_obj, create = ResponseInSale.objects.update_or_create(
                 sale = insale_obj,
                 defaults = {
-                    'kode_produk' = rson.get('KODE_PRODUK', ''),
+                    'kode_produk' : rson.get('KODE_PRODUK', ''),
                     'waktu' : rson.get('WAKTU', ''),
                     'no_hp' : rson.get('NO_HP', ''),
                     'sn' : rson.get('SN', ''),
