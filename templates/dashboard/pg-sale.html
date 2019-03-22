@@ -32,7 +32,7 @@
                             </td>
                             <td>
                                 {{ sale.get_trx.customer }}
-                                <p>S/N {{ sale.get_api_trx.ns|default:'-' }} <span style="color:tomato">{{ sale.get_api_status|title }}</p>
+                                <p>S/N {{ sale.get_api_trx.sn|default:'-' }} <span style="color:tomato">{{ sale.get_api_status|title }}</p>
                             </td>
                             <td>{{ sale.credit|floatformat:0|intcomma }}</td>
                             <td>{{ sale.user }}</td>
