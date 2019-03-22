@@ -24,7 +24,7 @@ def instansale_repeat_response(res_id):
     if response_insale_objs.exists():
         response_insale = response_insale_objs.get()
         if response_insale.ref2 is not None and response_insale.ref2 != '':
-            h_time = timezone.localtime(response_insale.timestamp) + datetime.timedelta(minutes=10)
+            h_time = timezone.localtime(response_insale.sale.timestamp) + datetime.timedelta(minutes=10)
             l_time = h_time + datetime.timedelta(days=-1)
 
             payload  = {
