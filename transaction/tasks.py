@@ -40,7 +40,7 @@ def instansale_repeat_response(res_id):
             }
 
             try :
-                r = requests.post(_link, json.dumps(payload), timeout=15)
+                r = requests.post(_link, json.dumps(payload), timeout=40)
                 if r.status_code == requests.codes.ok:
                     rson = r.json()
 
@@ -101,7 +101,7 @@ def instansale_tasks(sale_id):
     try :
         r = requests.post(
             _link, data=json.dumps(payload),
-            timeout = 20
+            timeout = 40
         )
 
         if r.status_code == requests.codes.ok:
@@ -195,7 +195,7 @@ def ppobsale_tasks(sale_id):
     try :
         r = requests.post(
             _link, data=json.dumps(payload),
-            timeout = 20
+            timeout = 40
         )
 
         if r.status_code == requests.codes.ok:

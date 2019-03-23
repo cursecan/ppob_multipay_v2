@@ -27,7 +27,6 @@ def get_pagination(obj, n=10, page=1):
     return bill_list
 
 
-
 def get_application_view(request):
     data = dict()
     app_obj = Application.objects.latest('timestamp')
