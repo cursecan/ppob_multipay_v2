@@ -78,6 +78,68 @@ def instansale_repeat_response(res_id):
                 pass
 
 
+@background(schedule=60)
+def ppobsale_repeat_response(res_id):
+    response_insale_objs = ResponsePpobSale.objects.filter(
+        id = res_id, sale__closed=False
+    )
+    if response_insale_objs.exists():
+        response_insale = response_insale_objs.get()
+        if response_insale.ref2 is not None and response_insale.ref2 != '':
+            h_time = timezone.localtime(response_insale.sale.timestamp) + datetime.timedelta(minutes=10)
+            l_time = h_time + datetime.timedelta(days=-1)
+
+            payload  = {
+                "method"      : "rajabiller.datatransaksi",
+                "uid"         : _user,
+                "pin"         : _pin,
+                "tgl1"        : l_time.strftime('%Y%m%d%H%M%S'),
+                "tgl2"        : h_time.strftime('%Y%m%d%H%M%S'),
+                "id_transaksi": response_insale.ref2,
+                "id_produk"   : "",
+                "idpel"       : "",
+                "limit"       : ""
+            }
+
+            try :
+                r = requests.post(_link, json.dumps(payload), timeout=40)
+                if r.status_code == requests.codes.ok:
+                    rson = r.json()
+
+                    # {
+                    #     'UID': 'SP118171', 
+                    #     'KET': 'Transaksi berhasil', 
+                    #     'LIMIT': '', 'IDPEL': '', 'TGL2': '20190318010101', 'PIN': '------', 
+                    #     'TGL1': '20190317010101', 'STATUS': '00', 'KODE_PRODUK': '', 
+                    #     'RESULT_TRANSAKSI': ['1307083649#20190317202539#S5H#TELKOMSEL SIMPATI / AS 5RB#081315667766#00#Pembelian voucher pulsa S5HX berhasil ke no 081315667766. Kode Voucher: 0041003499597509.#5575#0041003499597509#SUKSES']
+                    # }
+
+                    try :
+                        data = rson['RESULT_TRANSAKSI'][0]
+                        trx_ref, waktu, code, product, nopel, statcode, info, price, sn, status = data.split('#')
+
+                        try :
+                            price = int(price)
+                        except:
+                            price = 0
+
+                        if statcode == '00' and sn != '':
+                            response_insale_objs.update(
+                                waktu = waktu,
+                                no_hp = nopel,
+                                sn = sn,
+                                status = statcode,
+                                ket = status,
+                                saldo_terpotong = price
+                            )
+                            Status.objects.create(ppobsale=response_insale.sale, status='CO')
+                    except:
+                        pass
+
+            except:
+                pass
+
+
 
 @background(schedule=1)
 def instansale_tasks(sale_id):
@@ -209,21 +271,27 @@ def ppobsale_tasks(sale_id):
     except :
         pass
 
-    ResponsePpobSale.objects.filter(sale=ppob_sale).update(
-        kode_produk = rson.get('KODE_PRODUK', ''),
-        waktu = rson.get('WAKTU', ''),
-        idpel1 = rson.get('IDPEL1', ''),
-        idpel2 = rson.get('IDPEL2', ''),
-        idpel3 = rson.get('IDPEL3', ''),
-        nama_pelanggan = rson.get('NAMA_PELANGGAN', ''),
-        periode = rson.get('PERIODE', ''),
-        nominal = int(rson.get('NOMINAL', 0)),
-        admin = int(rson.get('ADMIN', 0)),
-        ref1 = rson.get('REF1', ''),
-        ref2 = rson.get('REF2', ''),
-        ref3 = rson.get('REF3', ''),
-        status = rson.get('STATUS', ''),
-        ket = rson.get('KET', ''),
-        saldo_terpotong = int(rson.get('SALDO_TERPOTONG', 0)),
-        url_struk = rson.get('URL_STRUK', '')
+    res_ppob, create = ResponsePpobSale.objects.update_or_create(
+        sale = ppob_sale,
+        defaults = {
+            'kode_produk' : rson.get('KODE_PRODUK', ''),
+            'waktu' : rson.get('WAKTU', ''),
+            'idpel1' : rson.get('IDPEL1', ''),
+            'idpel2' : rson.get('IDPEL2', ''),
+            'idpel3' : rson.get('IDPEL3', ''),
+            'nama_pelanggan' : rson.get('NAMA_PELANGGAN', ''),
+            'periode' : rson.get('PERIODE', ''),
+            'nominal' : int(rson.get('NOMINAL', 0)),
+            'admin' : int(rson.get('ADMIN', 0)),
+            'ref1' : rson.get('REF1', ''),
+            'ref2' : rson.get('REF2', ''),
+            'ref3' : rson.get('REF3', ''),
+            'status' : rson.get('STATUS', ''),
+            'ket' : rson.get('KET', ''),
+            'saldo_terpotong' : int(rson.get('SALDO_TERPOTONG', 0)),
+            'url_struk' : rson.get('URL_STRUK', '')
+        }
     )
+
+    if ppob_sale.sale_type = 'PY':
+        ppobsale_repeat_response(res_ppob.id, creator=res_ppob)

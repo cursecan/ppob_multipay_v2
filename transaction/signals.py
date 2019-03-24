@@ -115,6 +115,16 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
 def status_failed_process(sender, instance, created, **kwargs):
     duedate = timezone.now()
     if created:
+        # PPOB SALE
+        if instance.ppobsale:
+            saleppob_obj = instance.ppobsale
+
+            if instance.status == 'CO':
+                saleppob_obj.closed = True
+                saleppob_obj.save()
+
+
+        # INSTAN SALE
         if instance.instansale:
             saletrx_obj = instance.instansale
  
