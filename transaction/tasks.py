@@ -293,5 +293,5 @@ def ppobsale_tasks(sale_id):
         }
     )
 
-    if ppob_sale.sale_type = 'PY':
+    if ppob_sale.sale_type == 'PY':
         ppobsale_repeat_response(res_ppob.id, creator=res_ppob)
