@@ -126,8 +126,7 @@ def ppobsale_repeat_response(res_id):
                         if statcode == '00' and sn != '':
                             response_insale_objs.update(
                                 waktu = waktu,
-                                no_hp = nopel,
-                                sn = sn,
+                                ref3 = sn,
                                 status = statcode,
                                 ket = status,
                                 saldo_terpotong = price
