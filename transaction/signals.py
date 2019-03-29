@@ -136,19 +136,6 @@ def status_failed_process(sender, instance, created, **kwargs):
                 saletrx_obj.save()
 
             elif instance.status == 'FL':                
-                # Refund billing
-                last_bill_obj = saletrx_obj.get_billing_record()
-                BillingRecord.objects.create(
-                    instansale_trx = saletrx_obj,
-                    debit = saletrx_obj.price,
-                    user = saletrx_obj.create_by,
-                    prev_billing = last_bill_obj,
-                    sequence = last_bill_obj.sequence + 1
-                )
-                saletrx_obj.bill_instan_trx.update(
-                    is_delete=True, delete_on=duedate
-                )
-
                 # Refund Commision
                 last_sale_obj = saletrx_obj.get_commision_record()
                 if last_sale_obj:
@@ -175,6 +162,22 @@ def status_failed_process(sender, instance, created, **kwargs):
                     saletrx_obj.loan_instan_trx.update(
                         is_delete=True, delete_on=duedate
                     )
+
+                # Refund billing
+                last_bill_obj = saletrx_obj.get_billing_record()
+                refund = saletrx_obj.price
+                if last_loan_obj:
+                    refund = last_loan_obj.debit
+                BillingRecord.objects.create(
+                    instansale_trx = saletrx_obj,
+                    debit = refund,
+                    user = saletrx_obj.create_by,
+                    prev_billing = last_bill_obj,
+                    sequence = last_bill_obj.sequence + 1
+                )
+                saletrx_obj.bill_instan_trx.update(
+                    is_delete=True, delete_on=duedate
+                )
 
                 saletrx_obj.closed = True
                 saletrx_obj.save()
