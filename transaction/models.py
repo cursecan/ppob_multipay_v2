@@ -212,3 +212,20 @@ class ResponsePpobSale(CommonBase):
 
     def get_price(self):
         return self.nominal + self.admin
+
+
+class RefundRequest(CommonBase):
+    intstan_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='instan_refund')
+    comment = models.CharField(max_length=200)
+    closed = models.BooleanField(default=False)
+    create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+    def get_trx(self):
+        if self.intstan_trx:
+            return self.intstan_trx
+        return None
+
+class RefundApproval(CommonBase):
+    refund = models.OneToOneField(RefundRequest, on_delete=models.CASCADE)
+    approve = models.BooleanField(default=False)
+    create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)

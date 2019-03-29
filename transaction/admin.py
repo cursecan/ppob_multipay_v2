@@ -2,11 +2,13 @@ from django.contrib import admin
 
 from .models import (
     InstanSale, Status, PpobSale,
-    ResponseInSale, ResponsePpobSale
+    ResponseInSale, ResponsePpobSale,
+    RefundRequest, RefundApproval
 )
 from .forms import (
     InstanSaleForm,
-    PpobSaleForm
+    PpobSaleForm,
+    RefundRequestForm
 )
 
 
@@ -21,6 +23,14 @@ from .forms import (
 # @admin.register(Status)
 # class StatusAdmin(admin.ModelAdmin):
 #     pass
+
+@admin.register(RefundRequest)
+class RefundRequestAdmin(admin.ModelAdmin):
+    form = RefundRequestForm
+
+@admin.register(RefundApproval)
+class RefundApprovalAdmin(admin.ModelAdmin):
+    pass
 
 @admin.register(ResponseInSale)
 class ResponseInSaleAdmin(admin.ModelAdmin):

@@ -4,11 +4,13 @@ from django.utils import timezone
 
 from .models import (
     InstanSale, Status, PpobSale,
-    ResponseInSale, ResponsePpobSale
+    ResponseInSale, ResponsePpobSale,
+    RefundApproval, RefundRequest,
 )
+
 from billing.models import (
     BillingRecord, CommisionRecord,
-    LoanRecord, ProfitRecord
+    LoanRecord, ProfitRecord,
 )
 
 from .tasks import (
@@ -173,3 +175,20 @@ def status_failed_process(sender, instance, created, **kwargs):
                     saletrx_obj.loan_instan_trx.update(
                         is_delete=True, delete_on=duedate
                     )
+
+                saletrx_obj.closed = True
+                saletrx_obj.save()
+
+
+
+@receiver(post_save, sender=RefundApproval)
+def get_refund_response(sender, instance, created, **kwars):
+    if created:
+        trx = instance.refund.get_trx()
+        if instance.approve:
+            Status.objects.create(
+                instansale = trx, status='FL'
+            )
+
+        instance.refund.closed = True
+        instance.refund.save()
