@@ -32,11 +32,8 @@ class BillingRecord(CommonBase):
     
     def get_active_balance(self):
         if self.user.profile.user_type == 2:
-            return BillingRecord.objects.filter(
-                id__lte=self.id, user__profile__agen=self.user, is_delete=False
-            ).aggregate(
-                bal = Sum(F('debit') - F('credit'))
-            )['bal']
+            return self.balance
+            
         return BillingRecord.objects.filter(
             id__lte=self.id, user=self.user, is_delete=False
         ).aggregate(
