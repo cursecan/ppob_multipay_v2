@@ -11,6 +11,7 @@ class BillingRecordSerializer(serializers.ModelSerializer):
     transaction = serializers.SerializerMethodField(read_only=True)
     status = serializers.SerializerMethodField(read_only=True)
     user = UserSimpleSerializer(read_only=True)
+    balance = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = BillingRecord
@@ -28,3 +29,6 @@ class BillingRecordSerializer(serializers.ModelSerializer):
 
     def get_status(self, obj):
         return obj.get_api_status()
+
+    def get_balance(self, obj):
+        return obj.get_active_balance()
