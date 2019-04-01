@@ -50,8 +50,8 @@ class CommisionRecordAdmin(admin.ModelAdmin):
 
 @admin.register(LoanRecord)
 class LoanRecordAdmin(admin.ModelAdmin):
-    list_editable = [
-        'closed'
+    list_filter = [
+        'record_type'
     ]
     search_fields = [
         'user__email'
