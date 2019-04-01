@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import F, Sum, Value as V
+from django.db.models import F, Q, Sum, Value as V
 from django.db.models.functions import Coalesce
 
 from core.models import CommonBase
@@ -31,7 +31,11 @@ class BillingRecord(CommonBase):
         ]
     
     def get_active_balance(self):
-        return self.balance
+        return BillingRecord.objects.filter(
+            id__lte=self.id, user=self.user, is_delete=False
+        ).aggregate(
+            bal = Sum(F('debit') - F('credit'))
+        )['bal']
 
     def get_trx(self):
         if self.instansale_trx:
