@@ -14,7 +14,7 @@ class BillingRecordAdmin(admin.ModelAdmin):
     list_display = [
         'display_sale', 'display_product',
         'user',
-        'debit', 'credit', 'vbalance',
+        'debit', 'credit', 'balance',
         'display_status',
         'timestamp', 'update',
     ]
@@ -25,9 +25,6 @@ class BillingRecordAdmin(admin.ModelAdmin):
         if instance.ppobsale_trx:
             return instance.ppobsale_trx
         return None
-
-    def vbalance(self, instance):
-        return instance.get_active_balance()
 
     def display_sale(self, instance):
         if self.get_sale(instance):
