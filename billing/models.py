@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Sum, Value as V
+from django.db.models import F, Sum, Value as V
 from django.db.models.functions import Coalesce
 
 from core.models import CommonBase
@@ -31,6 +31,9 @@ class BillingRecord(CommonBase):
         ]
 
     def save(self, *args, **kwargs):
+        """
+            Balence merupakan hasil kalkulasi debit & kredit
+        """
         self.balance = self.user.profile.wallet.saldo + self.debit - self.credit
         super(BillingRecord, self).save(*args, **kwargs)
 
@@ -100,6 +103,9 @@ class LoanRecord(CommonBase):
     record_type = models.CharField(max_length=2, choices=LIST_TYPE, default=LOAN)
     payform = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True) # form payment
     loan_payment = models.ForeignKey(LoanPayment, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_payment')
+    bill_record = models.ForeignKey(BillingRecord, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_bill')
+    closed = models.BooleanField(default=False)
+
     instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_instan_trx')
     ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='loan_ppob_trx')
 
@@ -110,16 +116,21 @@ class LoanRecord(CommonBase):
         ]
 
     def get_loan_residu(self):
-        loan_pay = self.loanrecord_set.aggregate(
-            pay = Coalesce(Sum('credit'), V(0))
+        loan_unpaid = self.bill_record.loan_bill.aggregate(
+            unpaid = Sum(F('debit') - F('credit'))
         )
-        return self.debit - loan_pay['pay']
+        return loan_unpaid['unpaid']
 
-    def save(self, *args, **kwargs):
-        self.balance = self.user.profile.wallet.loan + self.debit - self.credit
-        if self.record_type == self.PAYMENT:
-            self.balance = self.user.profile.wallet.loan - self.credit
-        super(LoanRecord, self).save(*args, **kwargs)
+        # loan_pay = self.loanrecord_set.aggregate(
+        #     pay = Sum('credit')
+        # )
+        # return self.debit - loan_pay['pay']
+
+    # def save(self, *args, **kwargs):
+    #     self.balance = self.user.profile.wallet.loan + self.debit - self.credit
+    #     if self.record_type == self.PAYMENT:
+    #         self.balance = self.user.profile.wallet.loan - self.credit
+    #     super(LoanRecord, self).save(*args, **kwargs)
 
 
 class ProfitRecord(CommonBase):

@@ -42,7 +42,7 @@
                         </td>
                         <td>{{ profile.wallet.get_saldo|floatformat:0|intcomma }}</td>
                         <td>{{ profile.wallet.commision|floatformat:0|intcomma }}</td>
-                        <td>{{ profile.wallet.loan|floatformat:0|intcomma }}</td>
+                        <td>{{ profile.wallet.get_loan|floatformat:0|intcomma }}</td>
                         <td>{{ profile.wallet.limit|floatformat:0|intcomma }}</td>
                     </tr>
                     {% endfor %}

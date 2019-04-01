@@ -8,7 +8,7 @@ from .models import (
 from .forms import (
     InstanSaleForm,
     PpobSaleForm,
-    RefundRequestForm
+    RefundRequestForm, RefundApprovalForm
 )
 
 
@@ -30,7 +30,7 @@ class RefundRequestAdmin(admin.ModelAdmin):
 
 @admin.register(RefundApproval)
 class RefundApprovalAdmin(admin.ModelAdmin):
-    pass
+    form = RefundApprovalForm
 
 @admin.register(ResponseInSale)
 class ResponseInSaleAdmin(admin.ModelAdmin):

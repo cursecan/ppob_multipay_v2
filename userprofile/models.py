@@ -72,6 +72,11 @@ class Wallet(CommonBase):
         if self.saldo < 0:
             return 0
         return self.saldo
+    
+    def get_loan(self):
+        if self.saldo > 0:
+            return 0
+        return (-self.saldo)
 
 
 class UploadUser(models.Model):

@@ -15,6 +15,7 @@ class InstanSaleListApiView(ListAPIView):
     serializer_class = InstanSaleCustomSerializer
 
 
+# Create API Instan Sale
 class InstanSaleCreateApiView(CreateAPIView):
     queryset = InstanSale.objects.all()
     serializer_class = InstanSaleCustomSerializer
@@ -25,6 +26,7 @@ class InstanSaleCreateApiView(CreateAPIView):
         return context
 
 
+# Create API Inquery PPOB
 class PpobInqueryApiView(CreateAPIView):
     queryset = PpobSale.objects.all()
     serializer_class = PpobInquerySerializer
@@ -35,6 +37,7 @@ class PpobInqueryApiView(CreateAPIView):
         return context
 
 
+# Create API Sale PPOB
 class PpobSaleCreateApiView(CreateAPIView):
     queryset = PpobSale.objects.all()
     serializer_class = PpobSaleCustomSerializer

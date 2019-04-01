@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
     loan = serializers.DecimalField(
         max_digits=15, decimal_places=0, 
-        source='profile.wallet.loan', read_only=True
+        source='profile.wallet.get_loan', read_only=True
     )
     init_loan = serializers.DecimalField(
         max_digits=15, decimal_places=0, 
@@ -85,6 +85,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class WalletSerializer(serializers.ModelSerializer):
     saldo = serializers.SerializerMethodField(read_only=True)
+    loan = serializers.SerializerMethodField(read_only=True)
     profile = ProfileSerializer(read_only=True)
 
     new_limit = serializers.DecimalField(max_digits=12, decimal_places=0, write_only=True)
@@ -105,6 +106,9 @@ class WalletSerializer(serializers.ModelSerializer):
 
     def get_saldo(self, obj):
         return obj.get_saldo()
+
+    def get_loan(self, obj):
+        return obj.get_loan()
 
     def update(self, instance, validated_data):
         instance.limit = validated_data.get('new_limit')

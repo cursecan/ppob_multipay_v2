@@ -43,7 +43,7 @@ urlpatterns = [
     path('jwt-api-token-auth/', obtain_jwt_token),
     path('jwt-api-token-refresh/', refresh_jwt_token),
     path('jwt-api-token-verify/', verify_jwt_token),
-    path('admin/', admin.site.urls),
+    path('adminpanel/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
     path('api/profile/', include('userprofile.api.urls')),
     path('api/product/', include('product.api.urls')),

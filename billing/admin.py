@@ -54,7 +54,8 @@ class LoanRecordAdmin(admin.ModelAdmin):
         'user', 'agen',
         'debit', 'credit', 'balance',
         'record_type',
-        'is_delete', 'is_paid'
+        'closed',
+        'is_delete',
     ]
 
 @admin.register(ProfitRecord)

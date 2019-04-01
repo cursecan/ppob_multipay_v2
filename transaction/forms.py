@@ -1,9 +1,23 @@
 from django import forms
+from django.db.models import Q
 
 from .models import (
-    InstanSale, PpobSale, RefundRequest
+    InstanSale, PpobSale, RefundRequest, RefundApproval
 )
 from product.models import Product
+
+class RefundApprovalForm(forms.ModelForm):
+    class Meta:
+        model = RefundApproval
+        fields = [
+            'refund', 'approve'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(RefundApprovalForm, self).__init__(*args, **kwargs)
+        self.fields['refund'].queryset = RefundRequest.objects.filter(
+            Q(closed=False) | Q(refundapproval__id=self.instance.id)
+        )
 
 class RefundRequestForm(forms.ModelForm):
     class Meta:
@@ -15,7 +29,9 @@ class RefundRequestForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RefundRequestForm, self).__init__(*args, **kwargs)
-        self.fields['intstan_trx'].queryset = InstanSale.objects.filter(closed=False)
+        self.fields['intstan_trx'].queryset = InstanSale.objects.filter(
+            Q(closed=False) | Q(instan_refund__id=self.instance.id)
+        )
 
 
 class InstanSaleForm(forms.ModelForm):

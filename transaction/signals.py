@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.db.models import F, Sum
 
 from .models import (
     InstanSale, Status, PpobSale,
@@ -18,6 +19,7 @@ from .tasks import (
 )
 
 
+# Intans Sale Trigering
 @receiver(post_save, sender=InstanSale)
 def intansale_billing_record(sender, instance, created, **kwargs):
     if created:
@@ -29,16 +31,29 @@ def intansale_billing_record(sender, instance, created, **kwargs):
             sale = instance
         )
 
+        # Billing record
+        bill_obj = BillingRecord.objects.create(
+            instansale_trx = instance,
+            credit = instance.price,
+            user = instance.create_by
+        )
+
         # Loan recording
-        if instance.create_by.profile.wallet.get_saldo() < instance.product.price:
+        """
+            - Func get_saldo() selalu positif atau 0
+            - Pengecekan saldo user terhadap harga jual produk transaksi
+        """
+        cur_saldo = instance.create_by.profile.wallet.get_saldo()
+        if cur_saldo < instance.product.price:
             LoanRecord.objects.create(
-                instansale_trx = instance,
+                bill_record = bill_obj,
                 user = instance.create_by,
                 agen = instance.create_by.profile.agen,
-                debit = instance.product.price - instance.create_by.profile.wallet.get_saldo()
+                debit = instance.product.price - cur_saldo
             )
 
         # Commision record
+        # User type 2 berati related agenya berlabel Agen
         if instance.create_by.profile.agen.profile.user_type == 2:
             CommisionRecord.objects.create(
                 instansale_trx = instance,
@@ -46,24 +61,18 @@ def intansale_billing_record(sender, instance, created, **kwargs):
                 agen = instance.create_by.profile.agen,
             )
 
-        # Billing record
-        BillingRecord.objects.create(
-            instansale_trx = instance,
-            credit = instance.price,
-            user = instance.create_by
-        )
 
         # Profit record
+        # Profit setiap penjuaalan (Warungid)
         ProfitRecord.objects.create(
             instansale_trx = instance,
         )
 
-        # Task process
+        # Task process (Backgroud Task)
         instansale_tasks(instance.id)
 
 
-
-
+# PPOB Sale Trigering
 @receiver(post_save, sender=PpobSale)
 def ppobsale_billing_record(sender, instance, created, **kwargs):
     if created:
@@ -76,16 +85,29 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
         )
 
         if instance.sale_type == 'PY':
+            # Billing record
+            bill_obj = BillingRecord.objects.create(
+                ppobsale_trx = instance,
+                credit = instance.price,
+                user = instance.create_by
+            )
+
             # Loan recording
-            if instance.create_by.profile.wallet.get_saldo() < instance.price:
+            """
+                - Func get_saldo() selalu positif atau 0
+                - Pengecekan saldo user terhadap harga jual produk transaksi
+            """
+            cur_saldo = instance.create_by.profile.wallet.get_saldo()
+            if cur_saldo < instance.price:
                 LoanRecord.objects.create(
-                    ppobsale_trx = instance,
+                    bill_record = bill_record,
                     user = instance.create_by,
                     agen = instance.create_by.profile.agen,
-                    debit = instance.price - instance.create_by.profile.wallet.get_saldo()
+                    debit = instance.price - cur_saldo
                 )
 
             # Commision record
+            # User type 2 berati related agenya berlabel Agen
             if instance.create_by.profile.agen.profile.user_type == 2:
                 CommisionRecord.objects.create(
                     ppobsale_trx = instance,
@@ -93,12 +115,6 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
                     agen = instance.create_by.profile.agen,
                 )
 
-            # Billing record
-            BillingRecord.objects.create(
-                ppobsale_trx = instance,
-                credit = instance.price,
-                user = instance.create_by
-            )
 
             # Profit record
             ProfitRecord.objects.create(
@@ -112,6 +128,7 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
             # Task process
             ppobsale_tasks.now(instance.id)
         
+
 
 @receiver(post_save, sender=Status)
 def status_failed_process(sender, instance, created, **kwargs):
@@ -151,23 +168,29 @@ def status_failed_process(sender, instance, created, **kwargs):
                     )
                 
                 # Refund loan
-                last_loan_obj = saletrx_obj.get_loan_record()
-                if last_loan_obj:
+                loan_objs = saletrx_obj.get_billing_record().loan_bill.filter(closed=False)
+                unpaid = 0
+                if loan_objs.exists():
+                    resume_loan = loan_objs.aggregate(
+                        residu = Sum(F('debit') - F('credit'))
+                    )
+                    unpaid = resume_loan['residu']
+
                     LoanRecord.objects.create(
-                        instansale_trx = saletrx_obj,
-                        user = last_loan_obj.user,
-                        agen = last_loan_obj.agen,
-                        credit = last_loan_obj.debit
+                        user = loan_objs[0].user,
+                        agen = loan_objs[0].agen,
+                        credit = unpaid,
+                        bill_record = loan_objs[0].bill_record
                     )
-                    saletrx_obj.loan_instan_trx.update(
-                        is_delete=True, delete_on=duedate
+
+                    loan_objs[0].bill_record.loan_bill.update(
+                        closed=True, is_delete=True, delete_on=duedate
                     )
+
 
                 # Refund billing
                 last_bill_obj = saletrx_obj.get_billing_record()
                 refund = saletrx_obj.price
-                if last_loan_obj:
-                    refund = last_loan_obj.debit
                 BillingRecord.objects.create(
                     instansale_trx = saletrx_obj,
                     debit = refund,
@@ -182,6 +205,10 @@ def status_failed_process(sender, instance, created, **kwargs):
                 saletrx_obj.closed = True
                 saletrx_obj.save()
 
+                last_bill_obj.loan_bill.update(
+                    closed=True, is_delete=True, delete_on=duedate
+                )
+
 
 
 @receiver(post_save, sender=RefundApproval)
@@ -193,5 +220,6 @@ def get_refund_response(sender, instance, created, **kwars):
                 instansale = trx, status='FL'
             )
 
-        instance.refund.closed = True
-        instance.refund.save()
+        RefundRequest.objects.filter(refundapproval__id=instance.id).update(
+            closed = True
+        )

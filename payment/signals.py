@@ -1,5 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Sum, F, Value as V
+from django.db.models.functions import Coalesce
 
 
 from .models import (
@@ -24,52 +26,56 @@ def payment_billing_record(sender, instance, created, **kwargs):
 @receiver(post_save, sender=LoanPayment)
 def payloan_biling_record(sender, instance, created, **kwargs):
     if created:
+        # List semua loan yang belum closed / complete
         loan_objs = LoanRecord.objects.filter(
             user = instance.user,
             record_type = 'LO',
-            is_paid = False,
-            is_delete = False
-        )
+            closed = False,
+        ).order_by('timestamp')
 
         if not instance.sender.is_superuser:
-            # SENDER IS AGEN OR OTHER CUSTOMER // NOMINAL HARUS SAMA DENGAN UTANGNYA
+            # Filter hanya untuk user sesuai agen terdaftar
             loan_objs = loan_objs.filter(agen=instance.sender)
 
         nominal = instance.amount
-        rec_loan_list = []
 
         for lo in loan_objs:
             unpaid = lo.get_loan_residu()
             if nominal <= 0:
                 break
-
-            amount = nominal
-            if nominal >= unpaid:
-                amount = unpaid
-                lo.is_paid = True
-                lo.save()
-
+    
             lo_new = LoanRecord()
             lo_new.user = lo.user
             lo_new.agen = lo.agen
             lo_new.payform = lo
             lo_new.loan_payment = instance
             lo_new.record_type = 'PA'
-            lo_new.credit = amount
+            lo_new.credit = nominal if nominal < unpaid else unpaid
+            lo_new.bill_record = lo.bill_record
             if not instance.virtual_cash:
-                lo_new.debit = amount
-                
+                lo_new.debit = lo_new.credit
             lo_new.save()
-            rec_loan_list.append(lo_new)
-            nominal -= amount
+            lo_new.debit = 0
+            lo_new.save()
+            
+
+            loan_res = lo_new.bill_record.loan_bill.aggregate(
+                residu = Sum(F('debit') - F('credit'))
+            )
+            if loan_res['residu'] == 0:
+                LoanRecord.objects.filter(
+                    bill_record = lo_new.bill_record
+                ).update(closed=True)
+
+            nominal -= lo_new.credit
 
         pay_obj = Payment.objects.create(
             amount = instance.amount,
             user = instance.user
         )
-        for i in rec_loan_list:
-            i.payment = pay_obj
-            i.save()
+        
+        instance.payment = pay_obj
+        instance.save()
 
 
 @receiver(post_save, sender=Transfer)
