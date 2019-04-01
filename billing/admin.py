@@ -53,15 +53,12 @@ class LoanRecordAdmin(admin.ModelAdmin):
     list_editable = [
         'closed'
     ]
-    list_filter = [
-        'record_type'
-    ]
     search_fields = [
         'user__email'
     ]
     list_display = [
         'user', 'agen',
-        'debit', 'credit', 'balance',
+        'debit', 'credit',
         'record_type',
         'closed',
         'is_delete',
