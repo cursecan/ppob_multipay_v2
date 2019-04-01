@@ -26,6 +26,7 @@ from rest_framework_jwt.views import (
 
 from core import views as core_views
 from dashboard import views as dashboard_views
+from transaction import views as transac_view
 
 urlpatterns = [
     path('', dashboard_views.index, name='home'),
@@ -50,6 +51,8 @@ urlpatterns = [
     path('api/transaction/', include('transaction.api.urls')),
     path('api/billing/', include('billing.api.urls')),
     path('api/payment/', include('payment.api.urls')),
+
+    path('trx-bulk-checking/', transac_view.bulk_update_trx),
 ]
 
 if not settings.DEBUG:

@@ -78,6 +78,12 @@ def instansale_repeat_response(res_id):
                 pass
 
 
+@background(schedule=10)
+def daily_instansale_bulk_update():
+    for i in ResponseInSale.objects.filter(sale__closed=False):
+        instansale_repeat_response(i.id)
+
+
 @background(schedule=60)
 def ppobsale_repeat_response(res_id):
     response_insale_objs = ResponsePpobSale.objects.filter(
