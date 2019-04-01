@@ -16,7 +16,7 @@ class BillingRecordAdmin(admin.ModelAdmin):
         'user',
         'debit', 'credit', 'balance',
         'display_status',
-        'timestamp'
+        'timestamp', 'update',
     ]
 
     def get_sale(self, instance):

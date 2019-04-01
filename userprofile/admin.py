@@ -33,7 +33,7 @@ class UploadUserAdmin(ImportExportModelAdmin):
 class WalletAdmin(ImportExportModelAdmin):
     resource_class = WalletResource
     list_display = [
-        'profile', 'saldo', 'limit', 'loan', 'init_loan', 'commision'
+        'profile', 'saldo', 'limit', 'init_loan', 'commision'
     ]
 
 

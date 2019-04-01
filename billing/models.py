@@ -29,13 +29,9 @@ class BillingRecord(CommonBase):
         ordering = [
             '-timestamp'
         ]
-
-    def save(self, *args, **kwargs):
-        """
-            Balence merupakan hasil kalkulasi debit & kredit
-        """
-        self.balance = self.user.profile.wallet.saldo + self.debit - self.credit
-        super(BillingRecord, self).save(*args, **kwargs)
+    
+    def get_active_balance(self):
+        return self.balance
 
     def get_trx(self):
         if self.instansale_trx:
@@ -73,10 +69,6 @@ class CommisionRecord(CommonBase):
         ordering = [
             '-timestamp'
         ]
-
-    def save(self, *args, **kwargs):
-        self.balance = self.agen.profile.wallet.commision + self.debit - self.credit
-        super(CommisionRecord, self).save(*args, **kwargs)
 
     def get_trx(self):
         if self.instansale_trx:
@@ -121,16 +113,6 @@ class LoanRecord(CommonBase):
         )
         return loan_unpaid['unpaid']
 
-        # loan_pay = self.loanrecord_set.aggregate(
-        #     pay = Sum('credit')
-        # )
-        # return self.debit - loan_pay['pay']
-
-    # def save(self, *args, **kwargs):
-    #     self.balance = self.user.profile.wallet.loan + self.debit - self.credit
-    #     if self.record_type == self.PAYMENT:
-    #         self.balance = self.user.profile.wallet.loan - self.credit
-    #     super(LoanRecord, self).save(*args, **kwargs)
 
 
 class ProfitRecord(CommonBase):
