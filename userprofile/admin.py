@@ -23,6 +23,7 @@ class WalletInline(admin.TabularInline):
     min_num = 1
     max_num = 1
 
+
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     search_fields = [
@@ -72,4 +73,9 @@ class ProfileAdmin(admin.ModelAdmin):
     display_status.short_description = 'is_Active'
     display_status.boolean = True
 
-    admin.site.unregister(User)
+
+class UserAdminCustom(UserAdmin):
+    pass
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdminCustom)
