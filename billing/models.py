@@ -40,6 +40,7 @@ class BillingRecord(CommonBase):
             bal = Sum(F('debit') - F('credit'))
         )['bal']
 
+
     def get_trx(self):
         if self.instansale_trx:
             return self.instansale_trx

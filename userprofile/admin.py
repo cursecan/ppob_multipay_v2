@@ -15,40 +15,41 @@ from .resources import (
     UploadUserResource,
 )
 
-class WalletInline(admin.StackedInline):
+class WalletInline(admin.TabularInline):
     model = Wallet
-    min = 1
-    max = 1
-
-
-@admin.register(UploadUser)
-class UploadUserAdmin(ImportExportModelAdmin):
-    list_display = [
-        'username', 'first_name', 'last_name'
+    fields = [
+        'saldo', 'commision', 'limit', 'init_loan'
     ]
-    resource_class = UploadUserResource
-
-
-@admin.register(Wallet)
-class WalletAdmin(ImportExportModelAdmin):
-    resource_class = WalletResource
-    list_display = [
-        'profile', 'saldo', 'limit', 'init_loan', 'commision'
-    ]
-
+    min_num = 1
+    max_num = 1
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     search_fields = [
-        'user__username', 'user__email'
+        'user__email', 'user__first_name', 'user__last_name'
     ]
     list_filter = [
         'user__is_active'
     ]
     list_display = [
-        'user', 'user_type', 'agen',
-        'display_saldo', 'display_commision', 'display_loan', 'display_limit',
+        'user', 'user_type', 'agen', 'display_status',
+        'display_saldo', 'display_commision', 'display_limit',
     ]
+
+    fieldsets = (
+        (
+            None, {
+                'fields': ('user', 'ponsel'),
+            }
+        ),
+        (
+            'Advance options', {
+                'fields': ('agen', 'user_type', 'email_confirmed'),
+                'classes': ('collapse',)
+            }
+        )
+    )
+
     inlines = [
         WalletInline
     ]
@@ -59,20 +60,16 @@ class ProfileAdmin(admin.ModelAdmin):
     def display_commision(self, instance):
         return instance.wallet.commision
 
-    def display_loan(self, instance):
-        return '{} + {}'.format(instance.wallet.loan, instance.wallet.init_loan)
-
     def display_limit(self, instance):
         return instance.wallet.limit
 
+    def display_status(self, instance):
+        return instance.user.is_active
+
     display_saldo.short_description = 'Saldo'
     display_commision.short_description = 'Commision'
-    display_loan.short_description = 'Loan'
     display_limit.short_description = 'Limit'
+    display_status.short_description = 'is_Active'
+    display_status.boolean = True
 
-class UserAdminCustom(UserAdmin):
-    pass
-
-
-admin.site.unregister(User)
-admin.site.register(User, UserAdminCustom)
+    admin.site.unregister(User)

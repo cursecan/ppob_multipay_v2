@@ -1,5 +1,6 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
+from django.utils.html import format_html
 
 from .resources import *
 
@@ -8,7 +9,7 @@ from .models import (
     Product, Prefix, Operator, Group
 )
 from .forms import (
-    GroupForm, OperatorForm
+    GroupForm, OperatorForm, ProductForm
 )
 
 
@@ -23,9 +24,6 @@ class ProductAdmin(ImportExportModelAdmin):
     ]
     list_max_show_all = 100
     list_per_page = 20
-    list_editable = [
-        'price', 'commision'
-    ]
     list_filter = [
         'is_active',
         'type_product',
@@ -33,12 +31,36 @@ class ProductAdmin(ImportExportModelAdmin):
         'group__group_name'
     ]
     list_display = [
-        'product_name',
-        'code', 'operator', 'group',
+        'display_product', 'operator', 'group',
         'nominal', 'price', 'commision',
         'is_active'
     ]
+    form = ProductForm
+    fieldsets = (
+        (None, {
+            'fields': ('type_product', 'code', 'product_name')
+        }),
+        (None, {
+            'fields': (('group', 'operator'),)
+        }),
+        ('Price information', {
+            'fields': ('nominal', 'price', 'commision'),
+            'classes': ('collapse',)
+        }),
+        (None, {
+            'fields' : ('is_active',)
+        })
+    )
     resource_class = ProductResource
+
+    def display_product(self, instance):
+        return format_html(
+            '{} ({})',
+            instance.product_name,
+            instance.code
+        )
+
+    display_product.short_description = 'Product'
 
 
 @admin.register(Operator)
@@ -52,13 +74,27 @@ class OperatorAdmin(ImportExportModelAdmin):
         'group__group_name'
     ]
     list_display = [
-        'operator_name', 'code',
+        'display_operator',
     ]
     inlines = [
         PrefixInline
     ]
     form = OperatorForm
     resource_class = OperatorResource
+
+    fieldsets = (
+        (None, {
+            'fields': (('code', 'operator_name'),)
+        }),
+    )
+
+    def display_operator(self, instance):
+        return format_html(
+            '{} ({})',
+            instance.operator_name,
+            instance.code
+        )
+    display_operator.short_description = 'Operator'
 
 
 @admin.register(Group)
@@ -72,7 +108,16 @@ class GroupAdmin(ImportExportModelAdmin):
         'operator__operator_name'
     ]
     list_display = [
-        'group_name', 'code',
+        'display_group'
     ]
     form = GroupForm
     resource_class = GroupResource
+
+    def display_group(self, instance):
+        return format_html(
+            '{} ({})',
+            instance.group_name,
+            instance.code
+        )
+
+    display_group.short_description = 'Group'

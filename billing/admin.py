@@ -16,7 +16,7 @@ class BillingRecordAdmin(admin.ModelAdmin):
         'user',
         'debit', 'credit', 'balance',
         'display_status',
-        'timestamp', 'update',
+        'timestamp',
     ]
 
     def get_sale(self, instance):
@@ -29,7 +29,7 @@ class BillingRecordAdmin(admin.ModelAdmin):
     def display_sale(self, instance):
         if self.get_sale(instance):
             return self.get_sale(instance).code
-        return  None
+        return  '000 - Non Transaksi'
 
     def display_product(self, instance):
         if self.get_sale(instance):
@@ -40,6 +40,10 @@ class BillingRecordAdmin(admin.ModelAdmin):
         if self.get_sale(instance):
             return self.get_sale(instance).get_status()
         return None
+
+    display_sale.short_description = 'Trx'
+    display_product.short_description = 'Produk'
+    display_status.short_description = 'Status'
 
 @admin.register(CommisionRecord)
 class CommisionRecordAdmin(admin.ModelAdmin):
