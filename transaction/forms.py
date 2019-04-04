@@ -34,6 +34,8 @@ class RefundRequestForm(forms.ModelForm):
             Q(closed=False) | Q(instan_refund__id=self.instance.id)
         )
         self.fields['ppob_trx'].queryset = PpobSale.objects.filter(
+            sale_type='PY'
+        ).filter(
             Q(closed=False) | Q(ppob_refund__id=self.instance.id)
         )
 
