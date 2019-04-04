@@ -24,6 +24,7 @@ class RefundRequestForm(forms.ModelForm):
         model = RefundRequest
         fields = [
             'intstan_trx',
+            'ppob_trx',
             'comment',
         ]
 

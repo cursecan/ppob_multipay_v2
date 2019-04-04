@@ -216,6 +216,7 @@ class ResponsePpobSale(CommonBase):
 
 class RefundRequest(CommonBase):
     intstan_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='instan_refund')
+    ppob_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='ppob_refund')
     comment = models.CharField(max_length=200)
     closed = models.BooleanField(default=False)
     create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
@@ -223,6 +224,8 @@ class RefundRequest(CommonBase):
     def get_trx(self):
         if self.intstan_trx:
             return self.intstan_trx
+        if self.ppob_trx:
+            return self.ppob_trx
         return None
 
 class RefundApproval(CommonBase):

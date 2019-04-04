@@ -100,7 +100,7 @@ def ppobsale_billing_record(sender, instance, created, **kwargs):
             cur_saldo = instance.create_by.profile.wallet.get_saldo()
             if cur_saldo < instance.price:
                 LoanRecord.objects.create(
-                    bill_record = bill_record,
+                    bill_record = bill_obj,
                     user = instance.create_by,
                     agen = instance.create_by.profile.agen,
                     debit = instance.price - cur_saldo
@@ -141,6 +141,65 @@ def status_failed_process(sender, instance, created, **kwargs):
             if instance.status == 'CO':
                 saleppob_obj.closed = True
                 saleppob_obj.save()
+
+            elif instance.status == 'FL':
+                # only for payment type not inquery
+                if saleppob_obj.sale_type == 'PY':
+                    # Refund Commisison
+                    last_commision_obj = saleppob_obj.get_commision_record()
+                    if last_commision_obj:
+                        CommisionRecord.objects.create(
+                            ppobsale_trx = saleppob_obj,
+                            credit = last_commision_obj.debit,
+                            agen = last_commision_obj.agen,
+                            prev_com = last_commision_obj,
+                            sequence = last_commision_obj.sequence + 1
+                        )
+
+                        saleppob_obj.commision_ppob_trx.update(
+                            is_delete = True, delete_on=duedate
+                        )
+
+                    # Refund Loan
+                    loan_objs = saleppob_obj.get_billing_record().loan_bill.filter(closed=False)
+                    unpaid = 0
+                    if loan_objs.exists():
+                        resume_loan = loan_objs.aggregate(
+                            residu = Sum(F('debit') - F('credit'))
+                        )
+                        unpaid = resume_loan['residu']
+
+                        LoanRecord.objects.create(
+                            user = loan_objs[0].user,
+                            agen = loan_objs[0].agen,
+                            credit = unpaid,
+                            bill_record = loan_objs[0].bill_record
+                        )
+
+                        loan_objs[0].bill_record.loan_bill.update(
+                            closed=True, is_delete=True, delete_on=duedate
+                        )
+
+                    # Refund billing
+                    last_bill_obj = saleppob_obj.get_billing_record()
+                    refund = saleppob_obj.price
+                    BillingRecord.objects.create(
+                        ppobsale_trx = saleppob_obj,
+                        debit = refund,
+                        user = saleppob_obj.create_by,
+                        prev_billing = last_bill_obj,
+                        sequence = last_bill_obj.sequence + 1
+                    )
+                    saleppob_obj.bill_ppob_trx.update(
+                        is_delete=True, delete_on=duedate
+                    )
+
+                    saleppob_obj.closed = True
+                    saleppob_obj.save()
+
+                    last_bill_obj.loan_bill.update(
+                        closed=True, is_delete=True, delete_on=duedate
+                    )
 
 
         # INSTAN SALE
@@ -216,9 +275,14 @@ def get_refund_response(sender, instance, created, **kwars):
     if created:
         trx = instance.refund.get_trx()
         if instance.approve:
-            Status.objects.create(
-                instansale = trx, status='FL'
-            )
+            if instance.refund.intstan_trx:
+                Status.objects.create(
+                    instansale = trx, status='FL'
+                )
+            elif instance.refund.ppob_trx:
+                Status.objects.create(
+                    ppobsale = trx, status='FL'
+                )
 
         RefundRequest.objects.filter(refundapproval__id=instance.id).update(
             closed = True
