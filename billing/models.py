@@ -52,6 +52,7 @@ class BillingRecord(CommonBase):
         trx = dict()
         if self.get_trx():
             trx['trx_code'] = self.get_trx().code
+            trx['customer'] = self.get_trx().customer
             trx['product'] = self.get_trx().product.product_name
             trx['commision'] = self.get_trx().commision
             trx['sn'] = self.get_trx().get_sn()

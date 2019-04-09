@@ -15,7 +15,10 @@ def wallet_saldo_update(sender, instance, created, **kwargs):
     """
     if created:
         # Calculate balance
-        instance.balance = instance.user.profile.wallet.saldo + instance.debit - instance.credit
+        cur_walet = instance.user.profile.wallet
+        cur_walet.refresh_from_db()
+        
+        instance.balance = cur_walet.saldo + instance.debit - instance.credit
         instance.save()
 
         # Updata saldo with new balance

@@ -24,6 +24,7 @@ class BillingRecordSerializer(serializers.ModelSerializer):
         ]
 
     def get_transaction(self, obj):
+        # already dict return
         return obj.get_api_trx()
 
     def get_status(self, obj):
