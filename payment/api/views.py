@@ -3,12 +3,15 @@ from rest_framework.generics import (
 )
 
 from payment.models import (
-    Payment, LoanPayment, Transfer
+    Payment, LoanPayment, Transfer, BankAccount
 )
 from billing.models import LoanRecord
 
 from .serializers import *
 
+class BankAccountListApiView(ListAPIView):
+    queryset = BankAccount.objects.all()
+    serializer_class = BankAccountSerializer
 
 class PaymentListApiView(ListAPIView):
     serializer_class = PaymentSerializer

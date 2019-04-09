@@ -5,12 +5,29 @@ from django.db.models import F, Sum, Value as V
 from django.db.models.functions import Coalesce
 
 from payment.models import (
-    Payment, LoanPayment, Transfer
+    Payment, LoanPayment, Transfer, BankAccount, Bank
 )
+
 from billing.models import LoanRecord
 
 from userprofile.api.serializers import UserSimpleSerializer
 
+class BankSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bank
+        fields = [
+            'bank_code', 'bank_name'
+        ]
+
+class BankAccountSerializer(serializers.ModelSerializer):
+    bank = BankSerializer(read_only=True)
+
+    class Meta:
+        model = BankAccount
+        fields = [
+            'id', 'bank',
+            'rekening', 'name'
+        ]
 
 class PaymentSerializer(serializers.ModelSerializer):
     user = UserSimpleSerializer(read_only=True)

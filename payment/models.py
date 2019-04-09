@@ -3,6 +3,24 @@ from django.contrib.auth.models import User
 
 from core.models import CommonBase
 
+class Bank(CommonBase):
+    bank_code = models.CharField(max_length=2, unique=True)
+    bank_name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.bank_name
+
+
+class BankAccount(CommonBase):
+    bank = models.ForeignKey(Bank, on_delete=models.CASCADE, related_name='bank_rekening')
+    rekening = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        ordering = [
+            'bank', 'name'
+        ]
+
 class Payment(CommonBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_payment')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
