@@ -1,0 +1,75 @@
+{% extends 'dashboard/base.html' %}
+{% load humanize %}
+
+{% block title %}
+Commisison
+{% endblock %}
+
+{% block dash_content %}
+<div class="ui fluid container">
+    <div class="ui horizontally padded stackable vertically divided grid">
+        <div class="row">
+            <div class="column">
+                <h1 class="ui header">
+                    Commision
+                    <div class="sub header">
+                        Komisi Transaksi Pejualan
+                    </div>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="ui right floated teal tiny statistic">
+                    <div class="value">{{ commision_resume.commision|intcomma }}</div>
+                    <div class="label">Commision</div>
+                </div>
+                <table class="ui small table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Trx</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Keterangan</th>
+                            <th>Create On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in commision_list %}
+                        <tr>
+                            <td>{{ forloop.counter0|add:commision_list.start_index }}</td>
+                            <td>
+                                <div class="ui list">
+                                    <div class="item">
+                                        <div class="content">
+                                            <a class="header">{{ i.get_trx.code }}</a>
+                                            <div class="description">{{ i.get_trx.product.product_name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ i.debit|floatformat:0|intcomma }}
+                            </td>
+                            <td>
+                                {{ i.credit|floatformat:0|intcomma }}
+                            </td>
+                            <td>
+                                -
+                            </td>
+                            <td>
+                                {{ i.timestamp|date:"d/m/Y H:i" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                {% include 'pagination.html' with obj=commision_list %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

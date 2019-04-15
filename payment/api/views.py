@@ -13,6 +13,7 @@ class BankAccountListApiView(ListAPIView):
     queryset = BankAccount.objects.all()
     serializer_class = BankAccountSerializer
 
+
 class PaymentListApiView(ListAPIView):
     serializer_class = PaymentSerializer
 

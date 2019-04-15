@@ -7,11 +7,28 @@
 
 {% block dash_content %}
 <div class="ui fluid container">
-    <div class="ui stackable horizontally padded grid">
+    <div class="ui stackable horizontally padded vertically divided grid">
         <div class="row">
             <div class="column">
-                <div class="ui top attached inverted secondary teal menu">
-                    <div class="item header">Members</div>
+                <h1 class="ui header">
+                    Member
+                    <div class="sub header">
+                        Anggota
+                    </div>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="ui text menu">
+                    <form action="" class="ui form item">
+                        <div class="field">
+                            <div class="ui right icon input">
+                                <i class="search icon"></i>
+                                <input type="text" name="q" placeholder="Search..." style="border-radius:20px">
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <table class="ui small bottom attached table">
                     <thead>
@@ -30,7 +47,18 @@
                     <tr onclick="window.location.href='{% url 'dashboard:profile' profile.id %}'">
                         <td>{{ profile_list.start_index|add:forloop.counter0 }}</td>
                         <td>
-                            <a>{{ profile.get_username }}</a> <br>{{ profile.get_fullname|title}}
+                            <div class="ui list">
+                                <div class="item">
+                                    <div class="content">
+                                        <a class="header">
+                                            {{ profile.get_fullname|title }}
+                                        </a>
+                                        <div class="description">
+                                            {{ profile.user.email }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                         <td>{{ profile.get_hidden_ponsel|default:'-' }}</td>
                         <td>
@@ -42,43 +70,14 @@
                         </td>
                         <td>{{ profile.wallet.get_saldo|floatformat:0|intcomma }}</td>
                         <td>{{ profile.wallet.commision|floatformat:0|intcomma }}</td>
-                        <td>{{ profile.wallet.get_loan|floatformat:0|intcomma }}</td>
+                        <td class="negative">{{ profile.wallet.get_loan|floatformat:0|intcomma }}</td>
                         <td>{{ profile.wallet.limit|floatformat:0|intcomma }}</td>
                     </tr>
                     {% endfor %}
                 </table>
 
-                {% if profile_list.has_other_pages %}
-                    <div class="ui pagination menu js-page">
-                        {% if profile_list.has_previous %}
-                            <a href="?page={{ profile_list.previous_page_number }}" class="item">&lt;</a>
-                        {% else %}
-                            <div class="item disabled">&lt;</div>
-                        {% endif %}            
-
-                        {% if profile_list.number|add:'-4' > 1 %}
-                        <a href="?page={{ profile_list.number|add:'-5' }}" class="item">&hellip;</a>
-                        {% endif %}
-
-                        {% for i in profile_list.paginator.page_range %}
-                            {% if profile_list.number == i %}
-                                <div class="item active ">{{ i }}</div>
-                            {% elif i > profile_list.number|add:'-5' and i < profile_list.number|add:'5' %}
-                                <a href="?page={{ i }}" class="item">{{ i }}</a>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if profile_list.paginator.num_pages > profile_list.number|add:'4' %}
-                        <a href="?page={{ profile_list.number|add:'5' }}" class="item">&hellip;</a>
-                        {% endif %}
-
-                        {% if profile_list.has_next %}
-                            <a href="?page={{ profile_list.next_page_number }}" class="item">&gt;</a>
-                        {% else %}
-                            <div class="item disabled">&gt;</div>
-                        {% endif %}   
-                    </div>
-                {% endif %}
+                <!-- Pagination -->
+                {% include 'pagination.html' with objs=profile_list %}
 
             </div>
         </div>

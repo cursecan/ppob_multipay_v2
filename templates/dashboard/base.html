@@ -1,21 +1,102 @@
 {% extends 'base.html' %}
 
+{% block css %}
+<style>
+.full.height {
+    display: flex;
+    flex-direction: row;
+}
+.full.height > .toc {
+    position: fixed;
+    z-index: 1;
+    width: 250px;
+    flex: 0 0 auto;
+    -webkit-box-flex: 0;
+    background-color: #00b5ad;
+    min-height: 2000px;
+}
+.full.height > .article {
+    flex: 1 1 auto;
+    margin-left: 250px;
+    min-width: 0px;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-    {% include 'header.html' %}
-    <div class="ui container">
-        <div class="ui text menu">
-            <div class="right menu">
-                {% if request.user.is_superuser %}
-                    <a href="" class="item"><i class="user secret icon"></i> Agen</a>
-                {% endif %}
-                <a href="{% url 'dashboard:member_list' %}" class="item"><i class="users icon"></i> Members</a>
+    <div class="ui vertical inverted sidebar menu left">
+        <div class="item">
+            <div class="ui basic center aligned segment">
+                <h4 class="ui icon inverted  header">
+                    <i class="apple icon"></i>
+                    Warungid
+                </h4>
             </div>
         </div>
+        <a href="{% url 'dashboard:sale_list' %}" class="item">
+            <i class="telegram icon"></i>
+            Sale
+        </a>
+        <a href="#" class="item">
+            <i class="git icon"></i>
+            Member
+        </a>
     </div>
-
-    <div class="ui vertical basic segment">
-        {% block dash_content %}
-        {% endblock %}
+    <div class="pusher">
+        <div class="full height">
+            <div class="toc">
+                <div class="ui vertical inverted teal fluid large menu">
+                    <div class="item">
+                        <h4 class="ui icon inverted  header">
+                            <i class="apple icon"></i>
+                            Warungid
+                        </h4>
+                    </div>
+                    <a href="{% url 'dashboard:index' %}" class="item">
+                        <i class="chart line icon"></i>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'dashboard:product_list' %}" class="item">
+                        <i class="shopping cart icon"></i>
+                        Product
+                    </a>
+                    <a href="{% url 'dashboard:getme' %}" class="item">
+                        <i class="id badge outline icon"></i>
+                        Profile
+                    </a>
+                    <a href="{% url 'dashboard:sale_list' %}" class="item">
+                        <i class="dollar sign icon"></i>
+                        Sales
+                    </a>
+                    
+                    <div class="item">
+                        <div class="header">
+                            Agen
+                        </div>
+                        <div class="menu">
+                            <a href="{% url 'dashboard:commision_list' %}" class="item">
+                                Commision
+                            </a>
+                            <a href="{% url 'dashboard:loan_list' %}" class="item">
+                                Loan
+                            </a>
+                            <a href="{% url 'dashboard:member_list' %}" class="item">
+                                <!-- <i class="git icon"></i> -->
+                                Members
+                            </a>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="article">
+                <div class="ui vertical basic segment">
+                    {% block dash_content %}
+                    <!-- Content -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        
     </div>
 {% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'dashboard/base.html' %}
+{% load humanize %}
+
+{% block title %}
+Loan
+{% endblock %}
+
+{% block dash_content %}
+<div class="ui fluid container">
+    <div class="ui horizontally padded stackable vertically divided grid">
+        <div class="row">
+            <div class="column">
+                <h1 class="ui header">
+                    Loan
+                    <div class="sub header">
+                        Piutang Member
+                    </div>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="ui text menu">
+                    <form action="" class="ui form item">
+                        <div class="field">
+                            <div class="ui right icon input">
+                                <i class="search icon"></i>
+                                <input type="text" name="q" placeholder="Search..." style="border-radius:20px">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <table class="ui small table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Info Trx</th>
+                            <th>Loan</th>
+                            <th>Payment</th>
+                            <th>Create by</th>
+                            <th>Create on</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in loan_list %}
+                        <tr>
+                            <td>{{ forloop.counter0|add:loan_list.start_index }}</td>
+                            <td>
+                                <div class="ui list">
+                                    <div class="content">
+                                        <a class="header">{{ i.bill_record.get_trx.code }}</a>
+                                        <div class="description">{{ i.bill_record.get_trx.product.product_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ i.debit|floatformat:0|intcomma }}
+                            </td>
+                            <td>
+                                {{ i.credit|floatformat:0|intcomma }}
+                            </td>
+                            <td>
+                                {{ i.user.email }}
+                            </td>
+                            <td>
+                                {{ i.timestamp|date:"d/m/Y H:i" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                {% include 'pagination.html' with objs=loan_list %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

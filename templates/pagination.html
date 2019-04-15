@@ -1,0 +1,31 @@
+{% if objs.has_other_pages %}
+    <div class="ui pagination menu js-page">
+        {% if objs.has_previous %}
+            <a href="?page={{ objs.previous_page_number }}" class="item">&lt;</a>
+        {% else %}
+            <div class="item disabled">&lt;</div>
+        {% endif %}            
+
+        {% if objs.number|add:'-4' > 1 %}
+        <a href="?page={{ objs.number|add:'-5' }}" class="item">&hellip;</a>
+        {% endif %}
+
+        {% for i in objs.paginator.page_range %}
+            {% if objs.number == i %}
+                <div class="item active ">{{ i }}</div>
+            {% elif i > objs.number|add:'-5' and i < objs.number|add:'5' %}
+                <a href="?page={{ i }}" class="item">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if objs.paginator.num_pages > objs.number|add:'4' %}
+        <a href="?page={{ objs.number|add:'5' }}" class="item">&hellip;</a>
+        {% endif %}
+
+        {% if objs.has_next %}
+            <a href="?page={{ objs.next_page_number }}" class="item">&gt;</a>
+        {% else %}
+            <div class="item disabled">&gt;</div>
+        {% endif %}   
+    </div>
+{% endif %}

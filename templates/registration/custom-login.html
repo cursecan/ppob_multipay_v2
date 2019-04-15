@@ -38,24 +38,10 @@ Login | Warungid
                     </div>
                 </form>
                 <div id="app" class="ui rights aligned vertical basic segment">
-                    Download aplikasi <a href="" target="_blank">Warungid.com <i class="android icon"></i></a> 
+                    Download aplikasi <a href="https://play.google.com/store/apps/details?id=com.warungid.warungid" target="_blank"><i class="android icon"></i> Warungid</a> 
                 </div>
             </div>
         </div>
     </div>
 </div>
 {%  endblock %}
-
-{% block js %}
-    <script>
-        $(document).ready(function() {
-            $.ajax({
-                url: "{% url 'dashboard:application' %}",
-                dataType: 'json',
-                success: function(data) {
-                    $('#app').html(data.html);
-                }
-            });
-        });
-    </script>
-{% endblock %}

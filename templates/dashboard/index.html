@@ -7,7 +7,20 @@
 
 {% block dash_content %}
 <div class="ui fluid container">
-    <div class="ui stackable horizontally padded grid">
+    <div class="ui stackable horizontally padded vertically divided grid">
+        <div class="row">
+            <div class="column">
+                <h1 class="ui header">
+                    <i class="chart line icon"></i>
+                    <div class="content">
+                        Dashboard
+                        <div class="sub header">
+                            Beranda
+                        </div>
+                    </div>
+                </h1>
+            </div>
+        </div>
         <div class="row">
             <div class="three wide column">
                 <div class="ui inverted teal segment">
@@ -34,67 +47,6 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="column">
-                <div class="ui top attached inverted teal secondary menu">
-                    <div class="item header">Recent 5 Sales</div>
-                    <div class="right menu">
-                        <a href="#" onclick="window.location.href='{% url 'dashboard:sale_list' %}'" class="item">View all</a>
-                        <form action="{% url 'dashboard:sale_list' %}" class="ui form item">
-                            <div class="ui icon input">
-                                <input name="q" type="text" placeholder="Search..." style="border-radius:20px" >
-                                <i class="search link icon"></i>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <table class="ui bottom attached small striped table">
-                    <tbody>
-                        {% for bill in bill_list %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>
-                                <a>{{ bill.get_trx.code }}</a>
-                                <p>Pembelian {{ bill.get_trx.product.product_name|title }}</p>
-                            </td>
-                            <td>
-                                {{ bill.get_trx.customer }}
-                                <p>
-                                    S/N {{ bill.get_api_trx.sn|default:'-' }} <i style="color:coral">{{ bill.get_api_status|title }}</i>
-                                </p>
-                            </td>
-                            <td>
-                                {{ bill.credit|floatformat:0|intcomma }}
-                            </td>
-                            <td>{{ bill.user }}</td>
-                            <td class="right aligned">
-                                {{ bill.timestamp }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 </div>
-{% endblock %}
-
-{% block js %}
-    <script>
-        $(document).ready(function() {
-            var conten = [
-                {
-                    'title': 'Search for X',
-                    'description': 'Descript somethings.',
-                    'url': 'http://google.com/{query}'
-                }
-            ]
-            $('.ui.search').search({
-                source: conten,
-                searchFields: ['title'],
-                fullTextSearch: false
-            });
-        });
-    </script>
 {% endblock %}

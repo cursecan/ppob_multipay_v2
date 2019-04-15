@@ -7,36 +7,57 @@
 
 {% block dash_content %}
 <div class="ui fluid container">
-    <div class="ui stackable horizontally padded grid">
+    <div class="ui stackable horizontally padded vertically divided grid">
         <div class="row">
             <div class="column">
-                <div class="ui top attached secondary inverted teal menu">
-                    <div class="item header">Sales</div>
-                    <div class="right menu">
-                        <form action="" class="ui form item">
-                            <div class="ui icon input">
-                                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Search..." style="border-radius:20px">
-                                <i class="search link icon"></i>
-                            </div>
-                        </form>
+                <h1 class="ui header">
+                    Sales
+                    <div class="sub header">
+                        Penjualan
                     </div>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="ui text menu">
+                    <form action="" class="ui form item">
+                        <div class="field">
+                            <div class="ui right icon input">
+                                <input style="border-radius:20px" type="text" name="q" placeholder="Search...">
+                                <i class="search icon"></i>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <table class="ui bottom attached small table">
+                <table class="ui small table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Info Trx</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                            <th class="right aligned">Date</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {% for sale in bill_list %}
                         <tr>
                             <td>{{ bill_list.start_index|add:forloop.counter0 }}</td>
                             <td>
-                                <a>{{ sale.get_trx.code }}</a>
-                                <p>Pembelian {{ sale.get_trx.product.product_name|title }} harga Rp {{ sale.credit|floatformat:0|intcomma }}</p>
+                                <div class="ui list">
+                                    <a class="header">{{ sale.get_trx.code }}</a>
+                                    <div class="description">
+                                        {{ sale.get_trx.product.product_name|title }}; {{ sale.get_trx.customer }}.
+                                        <p>S/N {{ sale.get_api_trx.sn|default:'-' }}</p>
+                                    </div>
+                                </div>
                             </td>
                             <td>
-                                {{ sale.get_trx.customer }}
-                                <p>S/N {{ sale.get_api_trx.sn|default:'-' }} <span style="color:tomato">{{ sale.get_api_status|title }}</p>
+                                {% if sale.is_delete %} <div class="ui orange mini label">Refund</div> {% else %} {{ sale.get_api_status|title }} {% endif %}
                             </td>
                             <td>{{ sale.credit|floatformat:0|intcomma }}</td>
-                            <td>{{ sale.user }}</td>
-                            <td class="right aligned">{{ sale.timestamp }}</td>
+                            <td class="right aligned">{{ sale.timestamp|date:"d/m/Y H:i" }}</td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -52,38 +73,9 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                {% if bill_list.has_other_pages %}
-                    <div class="ui pagination menu js-page">
-                        {% if bill_list.has_previous %}
-                            <a href="?page={{ bill_list.previous_page_number }}" class="item">&lt;</a>
-                        {% else %}
-                            <div class="item disabled">&lt;</div>
-                        {% endif %}            
 
-                        {% if bill_list.number|add:'-4' > 1 %}
-                        <a href="?page={{ bill_list.number|add:'-5' }}" class="item">&hellip;</a>
-                        {% endif %}
-
-                        {% for i in bill_list.paginator.page_range %}
-                            {% if bill_list.number == i %}
-                                <div class="item active ">{{ i }}</div>
-                            {% elif i > bill_list.number|add:'-5' and i < bill_list.number|add:'5' %}
-                                <a href="?page={{ i }}" class="item">{{ i }}</a>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if bill_list.paginator.num_pages > bill_list.number|add:'4' %}
-                        <a href="?page={{ bill_list.number|add:'5' }}" class="item">&hellip;</a>
-                        {% endif %}
-
-                        {% if bill_list.has_next %}
-                            <a href="?page={{ bill_list.next_page_number }}" class="item">&gt;</a>
-                        {% else %}
-                            <div class="item disabled">&gt;</div>
-                        {% endif %}   
-                    </div>
-                {% endif %}
-
+                <!-- Pagination -->
+                {% include 'pagination.html' with objs=bill_list %}
 
             </div>
         </div>

@@ -8,6 +8,10 @@ urlpatterns = [
     path('sales/', views.sale_view, name='sale_list'),
     path('members/', views.user_profile_view, name='member_list' ),
     path('profile/<int:id>/', views.user_profile_detail_view, name='profile'),
+    path('loans/', views.loanView, name='loan_list'),
+    path('commision/', views.commisionView, name='commision_list'),
+    path('products/', views.productView, name='product_list'),
+    path('get-me/', views.getMeView, name='getme'),
 
     path('api/billing-profile-<int:id>/', views.json_user_billing_view, name='json_billing_profile'),
     path('api/commision-profile-<int:id>/', views.json_user_commision_view, name='json_commision_profile'),

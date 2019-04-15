@@ -5,6 +5,7 @@ from django.db.models import F, Q, Sum, Count, Value as V, Case, When, Max, Min
 from django.db.models.functions import Coalesce, TruncDate, TruncMonth
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.contrib.postgres.search import SearchVector
 
 from billing.models import (
     BillingRecord, CommisionRecord, LoanRecord
@@ -14,6 +15,7 @@ from core.decorators import (
     user_is_agen, user_is_related_agen
 )
 from .models import Application
+
 
 def get_pagination(obj, n=10, page=1):
     page_list = Paginator(obj, n)
@@ -27,6 +29,7 @@ def get_pagination(obj, n=10, page=1):
     return bill_list
 
 
+# VIEW APPLICATION ON HOME PAGE
 def get_application_view(request):
     data = dict()
     app_obj = Application.objects.latest('timestamp')
@@ -49,7 +52,7 @@ def index(request):
 
     if not request.user.is_superuser:
         bill_objs = bill_objs.filter(
-            Q(user__profile__agen = request.user) | Q(user=request.user)
+            user=request.user
         )
 
     content = {
@@ -61,6 +64,11 @@ def index(request):
 # SALE VIEW
 @login_required
 def sale_view(request):
+    """
+        Sale for related user
+        Pagination
+        Search by customer
+    """
     page = request.GET.get('page', None)
     q = request.GET.get('q', None)
 
@@ -71,17 +79,21 @@ def sale_view(request):
     )
 
     if not request.user.is_superuser:
+        # Sales for related user
         bill_objs = bill_objs.filter(
-            Q(user__profile__agen = request.user) | Q(user=request.user)
+            user=request.user
         )
 
-    # Search value
     if q:
-        bill_objs = bill_objs.filter(
-            Q(instansale_trx__customer__contains=q) | Q(ppobsale_trx__customer__contains=q)
-        )
+        # Sale search
+        bill_objs = bill_objs.annotate(
+            search = SearchVector(
+                'instansale_trx__customer', 'ppobsale_trx__customer'
+            )
+        ).filter(search = q)
 
-    bill_list = get_pagination(bill_objs, page=page)
+    # Pagination
+    bill_list = get_pagination(bill_objs, n=20, page=page)
 
     content = {
         'bill_list': bill_list,
@@ -90,21 +102,101 @@ def sale_view(request):
     return render(request, 'dashboard/pg-sale.html', content)
 
 
+# PRODUCT  VIEW
+@login_required
+def productView(request):
+    return render(request, 'dashboard/pg-product.html')
+
+
+@login_required
+def getMeView(request):
+    return render(request, 'dashboard/pg-getme.html')
+
+# LOAN VIEW
+@login_required
+@user_is_agen
+def loanView(request):
+    """
+        Agen required
+        Loan of member
+        Loan Search
+        pagination
+    """
+    page = request.GET.get('page', 1)
+
+    loan_objs = LoanRecord.objects.filter(
+        agen = request.user
+    )
+
+    loan_pages = get_pagination(loan_objs, 20, page)
+    content = {
+        'loan_list': loan_pages
+    }
+
+    return render(request, 'dashboard/pg-loan.html', content)
+
+
+# COMMISISON VIEW
+@login_required
+@user_is_agen
+def commisionView(request):
+    """
+        Commision agen
+        Pagination
+    """
+    page = request.GET.get('page', 1)
+
+    commision_objs = CommisionRecord.objects.filter(
+        agen = request.user
+    )
+
+    resume_commision = commision_objs.aggregate(
+        commision = Coalesce(
+            Sum(F('debit')-F('credit')), V(0)
+        )
+    ) 
+    
+    commision_page = get_pagination(commision_objs, 20, page)
+    content = {
+        'commision_list': commision_page,
+        'commision_resume': resume_commision,
+    }
+
+    return render(request, 'dashboard/pg_commision.html', content)
+
+
 # USER LIST VIEW
 @login_required
 @user_is_agen
 def user_profile_view(request):
-    page = request.GET.get('page', None)
+    """
+        Profile list related agen
+        Search profile
+        Pagination
+    """
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', None)
+
     profile_objs = Profile.objects.select_related(
         'wallet'
     ).order_by('user__username')
 
     if not request.user.is_superuser:
+        # Profile related agen
         profile_objs = profile_objs.filter(
             agen = request.user
         )
     
-    profile_list = get_pagination(profile_objs, page=page)
+    if q:
+        # Search profile
+        profile_objs = profile_objs.annotate(
+            search = SearchVector(
+                'user__username', 'user__email', 'user__first_name', 'user__last_name'
+            )
+        ).filter(search=q)
+    
+    # Pagination
+    profile_list = get_pagination(profile_objs, 20, page)
 
     content = {
         'profile_list': profile_list
