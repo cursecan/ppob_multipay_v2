@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from core.models import CommonBase
+from bankrecon.models import Reconciliation
 
 class Bank(CommonBase):
     bank_code = models.CharField(max_length=2, unique=True)
@@ -24,6 +25,7 @@ class BankAccount(CommonBase):
 class Payment(CommonBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_payment')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
+    reconsil = models.OneToOneField(Reconciliation, on_delete=True, null=True, blank=True)
 
     class Meta:
         ordering = [

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'transaction',
     'userprofile',
     'dashboard',
+    'bankrecon',
 ]
 
 MIDDLEWARE = [

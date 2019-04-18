@@ -17,7 +17,7 @@ class UserListApiView(ListAPIView):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        queryset = User.objects.all()
+        queryset = User.objects.order_by('username')
         if not self.request.user.is_superuser:
             queryset = queryset.filter(profile__agen=self.request.user)
         

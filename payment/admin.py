@@ -3,39 +3,39 @@ from django.utils.html import format_html
 
 from .models import (
     Payment, LoanPayment, Transfer,
-    Bank, BankAccount
+    # Bank, BankAccount
 )
 
-from .forms import BankForm
+# from .forms import BankForm
 
-class BankAccountInline(admin.TabularInline):
-    model = BankAccount
-    extra = 1
-    fields = [
-        'rekening', 'name'
-    ]
+# class BankAccountInline(admin.TabularInline):
+#     model = BankAccount
+#     extra = 1
+#     fields = [
+#         'rekening', 'name'
+#     ]
 
-@admin.register(Bank)
-class BankAdmin(admin.ModelAdmin):
-    list_display = [
-        'display_bank',
-    ]
-    inlines = [
-        BankAccountInline
-    ]
-    form = BankForm
-    fields = [
-        'bank_code', 'bank_name'
-    ]
+# @admin.register(Bank)
+# class BankAdmin(admin.ModelAdmin):
+#     list_display = [
+#         'display_bank',
+#     ]
+#     inlines = [
+#         BankAccountInline
+#     ]
+#     form = BankForm
+#     fields = [
+#         'bank_code', 'bank_name'
+#     ]
 
-    def display_bank(self, instance):
-        return format_html(
-            '{} ({})',
-            instance.bank_name,
-            instance.bank_code
-        )
+#     def display_bank(self, instance):
+#         return format_html(
+#             '{} ({})',
+#             instance.bank_name,
+#             instance.bank_code
+#         )
 
-    display_bank.short_description = 'Bank'
+#     display_bank.short_description = 'Bank'
 
 
 @admin.register(Payment)
