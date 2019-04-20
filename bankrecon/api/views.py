@@ -1,5 +1,5 @@
 from rest_framework.generics import (
-    ListAPIView, CreateAPIView
+    ListAPIView, CreateAPIView, RetrieveAPIView
 )
 
 from .serializers import *
@@ -11,6 +11,13 @@ from bankrecon.models import (
 class BankAccountListApiView(ListAPIView):
     queryset = BankAccount.objects.all()
     serializer_class = BankAccountSerializer
+
+
+class BankAccountDetailApiView(RetrieveAPIView):
+    queryset = BankAccount.objects.all()
+    serializer_class = BankAccountSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'id'
 
 
 class CatatanListApiView(ListAPIView):
