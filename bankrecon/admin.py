@@ -10,7 +10,7 @@ class BankAccountInline(admin.TabularInline):
     model = BankAccount
     extra = 1
     fields = [
-        'account'
+        'account', 'name', 'how_to'
     ]
 
 
