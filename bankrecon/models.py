@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models import Sum
+from django.contrib.auth.models import User
 
 from core.models import CommonBase
 
@@ -12,6 +13,11 @@ class Bank(CommonBase):
     bank_code = models.CharField(max_length=3, unique=True)
     bank_name = models.CharField(max_length=50)
 
+    class Meta:
+        ordering = [
+            'bank_code'
+        ]
+
     def __str__(self):
         return self.bank_code
 
@@ -19,6 +25,13 @@ class Bank(CommonBase):
 class BankAccount(CommonBase):
     bank = models.ForeignKey(Bank, on_delete=models.CASCADE, related_name='bank')
     account = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=30, blank=True)
+    how_to = models.TextField(max_length=2000, blank=True)
+
+    class Meta:
+        ordering = [
+            'bank__bank_code'
+        ]
 
     def __str__(self):
         return self.account
@@ -52,3 +65,17 @@ class Reconciliation(CommonBase):
                 self.marker = mark[0]
 
         super(Reconciliation, self).save(*args, **kwargs)
+
+
+class Catatan(CommonBase):
+    nomor = models.CharField(max_length=20)
+    keterangan = models.CharField(max_length=30)
+    create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+    class Meta:
+        ordering = [
+            '-timestamp'
+        ]
+
+    def __str__(self):
+        return self.nomor
