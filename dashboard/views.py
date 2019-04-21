@@ -44,19 +44,12 @@ def get_application_view(request):
 # INDEX
 @login_required
 def index(request):
-    bill_objs = BillingRecord.objects.filter(
-        sequence = 1
-    ).filter(
-        Q(instansale_trx__isnull=False) | Q(ppobsale_trx__isnull=False)
+    commision_objs = CommisionRecord.objects.filter(
+        agen = request.user, is_delete=False
     )
 
-    if not request.user.is_superuser:
-        bill_objs = bill_objs.filter(
-            user=request.user
-        )
-
     content = {
-        'bill_list': bill_objs[:5]
+        'commision_list': commision_objs[:10]
     }
     return render(request, 'dashboard/index.html', content)
 

@@ -33,6 +33,7 @@ class CatatanSerializer(ModelSerializer):
         model = Catatan
         fields = [
             'id', 
+            'nama', 'category',
             'nomor', 'keterangan'
         ]
         read_only_fields = ['id']
@@ -40,10 +41,13 @@ class CatatanSerializer(ModelSerializer):
     def create(self, validated_data):
         nomor = validated_data.get('nomor')
         ket = validated_data.get('keterangan')
+        nama = validated_data.get('nama')
+        category = validated_data.get('category')
         create_by = self.context.get('user')
 
         catatan_obj = Catatan.objects.create(
             nomor = nomor, keterangan=ket,
+            nama = nama, category=category,
             create_by = create_by
         )
         return catatan_obj

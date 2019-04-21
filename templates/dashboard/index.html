@@ -10,7 +10,7 @@
     <div class="ui stackable horizontally padded vertically divided grid">
         <div class="row">
             <div class="column">
-                <h1 class="ui header">
+                <h1 class="ui grey header">
                     <i class="chart line icon"></i>
                     <div class="content">
                         Dashboard
@@ -22,27 +22,53 @@
             </div>
         </div>
         <div class="row">
-            <div class="three wide column">
-                <div class="ui inverted teal segment">
-                    <div class="ui tiny inverted statistic">
-                        <div class="label">Saldo</div>
-                        <div class="value">{{ user.profile.wallet.get_saldo|floatformat:0|intcomma }}</div>
+            <div class="column">
+                <div class="ui tiny teal statistic">
+                    <div class="label">Saldo</div>
+                    <div class="value">{{ user.profile.wallet.get_saldo|floatformat:0|intcomma }}</div>
+                </div>
+                <div class="ui tiny purple statistic">
+                    <div class="label">Limit</div>
+                    <div class="value">{{ user.profile.wallet.limit|floatformat:0|intcomma }}</div>
+                </div>
+                <div class="ui tiny red statistic">
+                    <div class="label">Loan</div>
+                    <div class="value">{{ user.profile.wallet.loan|floatformat:0|intcomma }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="ten wide column">
+                <div class="ui segment">
+                    <div class="ui placeholder">
+                        <div class="image header">
+                            <div class="content">
+                                <div class="line"></div>
+                                <div class="line"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="three wide column">
-                <div class="ui inverted orange segment">
-                    <div class="ui tiny inverted statistic">
-                        <div class="label">Limit</div>
-                        <div class="value">{{ user.profile.wallet.limit|floatformat:0|intcomma }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="three wide column">
-                <div class="ui inverted grey segment">
-                    <div class="ui tiny inverted statistic">
-                        <div class="label">Loan</div>
-                        <div class="value">{{ user.profile.wallet.loan|floatformat:0|intcomma }}</div>
+            <div class="six wide column">
+                <div class="ui segment">
+                    <div class="ui small feed">
+                        {% for i in commision_list %}
+                        <div class="event">
+                            <div class="content">
+                                <div class="extra text">
+                                    <a>{{ i.get_trx }}</a> <br>Earning {{ i.debit|floatformat:0|intcomma }} from  {{ i.get_trx.product.product_name|title }}
+                                </div>
+                                <div class="meta">
+                                    <div class="like">
+                                        {{ i.timestamp|naturaltime }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        No Commision
+                        {% endfor %}
                     </div>
                 </div>
             </div>
