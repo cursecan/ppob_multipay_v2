@@ -28,7 +28,7 @@ Product
                     <div class="item">
                         <div class="header">{{ i.group_name }}</div>
                         <div class="menu">
-                            {% for o in i.operator_set.all %}
+                            {% for o in i.operator_set.distinct %}
                             <a href="#" target-url="{% url 'dashboard:json_products' %}?gr={{ i.id }}&op={{ o.id }}" class="item js-product">
                                 {{ o.operator_name }}
                             </a>
