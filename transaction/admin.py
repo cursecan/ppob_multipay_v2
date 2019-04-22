@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.html import format_html
+
 
 from .models import (
     InstanSale, Status, PpobSale,
@@ -26,10 +28,21 @@ from .forms import (
 
 @admin.register(RefundRequest)
 class RefundRequestAdmin(admin.ModelAdmin):
+    list_display = [
+        'display_trx', 'comment'
+    ]
     form = RefundRequestForm
+
+    def display_trx(self, instance):
+        return instance.__str__()
+
+    display_trx.short_description = 'Trx'
 
 @admin.register(RefundApproval)
 class RefundApprovalAdmin(admin.ModelAdmin):
+    list_display = [
+        'refund', 'approve'
+    ]
     form = RefundApprovalForm
 
 @admin.register(ResponseInSale)

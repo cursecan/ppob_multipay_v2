@@ -31,12 +31,10 @@ class RefundRequestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RefundRequestForm, self).__init__(*args, **kwargs)
         self.fields['intstan_trx'].queryset = InstanSale.objects.filter(
-            Q(closed=False) | Q(instan_refund__id=self.instance.id)
+            closed=False
         )
         self.fields['ppob_trx'].queryset = PpobSale.objects.filter(
-            sale_type='PY'
-        ).filter(
-            Q(closed=False) | Q(ppob_refund__id=self.instance.id)
+            sale_type='PY', closed=False
         )
 
 

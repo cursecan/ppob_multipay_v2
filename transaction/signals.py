@@ -139,22 +139,28 @@ def status_failed_process(sender, instance, created, **kwargs):
             saleppob_obj = instance.ppobsale
 
             if instance.status == 'CO':
+                # Verify commision
+                commision = saleppob_obj.get_commision_record()
+                commision.verified = True
+                commision.save(update_fields=['verified'])
+
                 saleppob_obj.closed = True
                 saleppob_obj.save()
 
             elif instance.status == 'FL':
                 # only for payment type not inquery
                 if saleppob_obj.sale_type == 'PY':
-                    # Refund Commisison
+                    # Refund Commisison 
                     last_commision_obj = saleppob_obj.get_commision_record()
                     if last_commision_obj:
-                        CommisionRecord.objects.create(
-                            ppobsale_trx = saleppob_obj,
-                            credit = last_commision_obj.debit,
-                            agen = last_commision_obj.agen,
-                            prev_com = last_commision_obj,
-                            sequence = last_commision_obj.sequence + 1
-                        )
+                        # CommisionRecord.objects.create(
+                        #     ppobsale_trx = saleppob_obj,
+                        #     credit = last_commision_obj.debit,
+                        #     agen = last_commision_obj.agen,
+                        #     prev_com = last_commision_obj,
+                        #     verified = True,
+                        #     sequence = last_commision_obj.sequence + 1
+                        # )
 
                         saleppob_obj.commision_ppob_trx.update(
                             is_delete = True, delete_on=duedate
@@ -207,6 +213,11 @@ def status_failed_process(sender, instance, created, **kwargs):
             saletrx_obj = instance.instansale
  
             if instance.status == 'CO':
+                # Verify commision
+                commision = saletrx_obj.get_commision_record()
+                commision.verified = True
+                commision.save(update_fields=['verified'])
+
                 # Transaction Complete
                 saletrx_obj.closed = True
                 saletrx_obj.save()
@@ -215,13 +226,14 @@ def status_failed_process(sender, instance, created, **kwargs):
                 # Refund Commision
                 last_sale_obj = saletrx_obj.get_commision_record()
                 if last_sale_obj:
-                    CommisionRecord.objects.create(
-                        instansale_trx = saletrx_obj,
-                        credit = last_sale_obj.debit,
-                        agen = last_sale_obj.agen,
-                        prev_com = last_sale_obj,
-                        sequence = last_sale_obj.sequence + 1
-                    )
+                    # CommisionRecord.objects.create(
+                    #     instansale_trx = saletrx_obj,
+                    #     credit = last_sale_obj.debit,
+                    #     agen = last_sale_obj.agen,
+                    #     prev_com = last_sale_obj,
+                    #     verified = True,
+                    #     sequence = last_sale_obj.sequence + 1
+                    # )
                     saletrx_obj.commision_instan_trx.update(
                         is_delete=True, delete_on=duedate
                     )

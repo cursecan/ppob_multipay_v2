@@ -221,6 +221,17 @@ class RefundRequest(CommonBase):
     closed = models.BooleanField(default=False)
     create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
+    class Meta:
+        ordering = [
+            '-timestamp'
+        ]
+
+    def __str__(self):
+        if self.intstan_trx:
+            return self.intstan_trx.code
+        if self.ppob_trx:
+            return self.ppob_trx.code
+
     def get_trx(self):
         if self.intstan_trx:
             return self.intstan_trx
@@ -232,3 +243,8 @@ class RefundApproval(CommonBase):
     refund = models.OneToOneField(RefundRequest, on_delete=models.CASCADE)
     approve = models.BooleanField(default=False)
     create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+    class Meta:
+        ordering = [
+            '-timestamp'
+        ]
