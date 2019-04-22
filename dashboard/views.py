@@ -14,6 +14,10 @@ from userprofile.models import Profile
 from core.decorators import (
     user_is_agen, user_is_related_agen
 )
+from product.models import (
+    Product, Group
+)
+
 from .models import Application
 
 
@@ -49,7 +53,7 @@ def index(request):
     )
 
     content = {
-        'commision_list': commision_objs[:10]
+        'commision_list': commision_objs[:5]
     }
     return render(request, 'dashboard/index.html', content)
 
@@ -98,7 +102,13 @@ def sale_view(request):
 # PRODUCT  VIEW
 @login_required
 def productView(request):
-    return render(request, 'dashboard/pg-product.html')
+    group_objs = Group.objects.filter(
+        active = True
+    )
+    content = {
+        'group_list': group_objs
+    }
+    return render(request, 'dashboard/pg-product.html', content)
 
 
 @login_required

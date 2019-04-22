@@ -23,17 +23,24 @@
         </div>
         <div class="row">
             <div class="column">
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">
+                            {{ request.user.profile.get_fullname|title }}
+                        </div>
+                        <div class="description">
+                            Hai {{ request.user.first_name }}, selamat datang di dashboard.
+                        </div>
+                    </div>
+                </div>
+
                 <div class="ui tiny teal statistic">
                     <div class="label">Saldo</div>
                     <div class="value">{{ user.profile.wallet.get_saldo|floatformat:0|intcomma }}</div>
                 </div>
                 <div class="ui tiny purple statistic">
-                    <div class="label">Limit</div>
-                    <div class="value">{{ user.profile.wallet.limit|floatformat:0|intcomma }}</div>
-                </div>
-                <div class="ui tiny red statistic">
-                    <div class="label">Loan</div>
-                    <div class="value">{{ user.profile.wallet.loan|floatformat:0|intcomma }}</div>
+                    <div class="label">Commision</div>
+                    <div class="value">{{ user.profile.wallet.commision|floatformat:0|intcomma }}</div>
                 </div>
             </div>
         </div>
@@ -48,6 +55,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="ui clearing segment">
+                    <h4 class="ui left floated header">
+                        TRANSACTION RATE
+                    </h4>
                 </div>
             </div>
             <div class="six wide column">

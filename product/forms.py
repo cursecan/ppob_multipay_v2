@@ -9,7 +9,7 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = [
-            'code', 'group_name'
+            'code', 'group_name', 'active'
         ]
 
     def clean_group_name(self):

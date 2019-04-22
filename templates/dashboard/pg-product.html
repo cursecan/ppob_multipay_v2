@@ -1,5 +1,56 @@
 {% extends 'dashboard/base.html' %}
+{% load humanize %}
 
 {% block title %}
 Product
+{% endblock %}
+
+{% block dash_content %}
+<div class="ui fluid container">
+    <div class="ui stackabel horizontally padded vertically divided grid">
+        <div class="row">
+            <div class="column">
+                <h1 class="ui grey header">
+                    <i class="coffee icon"></i>
+                    <div class="content">
+                        Product
+                        <div class="sub header">
+                            Produk    
+                        </div>
+                    </div>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="ui styled accordion">
+                    {% for i in group_list %}
+                    <div class="title {% if forloop.counter == 1 %} active {% endif %}">
+                        <i class="dropdown icon"></i>
+                        {{ i.group_name|title }}
+                    </div>
+                    <div class="content {% if forloop.counter == 1 %} active {% endif %}">
+                        <div class="ui relaxed list">
+                            {% for p in i.product_set.all %}
+                            <div class="item">
+                                <div class="content">
+                                    {{ p.product_name|title }}
+                                    <div title="{% if p.is_active %} Active product {% else %} Unactive {% endif %}" class="ui basic {% if p.is_active %} green {% else %} grey {% endif %} left pointing label">
+                                        {% if p.price == 0 %}
+                                            Depend Inq
+                                        {% else %}
+                                            IDR {{ p.price|intcomma }}
+                                        {% endif %}
+                                    </div>    
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

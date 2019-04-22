@@ -7,6 +7,7 @@ from core.models import CommonBase
 class Group(CommonBase):
     code = models.CharField(max_length=20, unique=True)
     group_name = models.CharField(max_length=100)
+    active = models.BooleanField(default=False)
 
     class Meta:
         ordering = [
