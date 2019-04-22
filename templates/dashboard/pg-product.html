@@ -86,7 +86,7 @@ Product
                 url: btn.attr('target-url'),
                 dataType: 'json',
                 success: function(data) {
-                    $('#table-id tbody').html(data.html);
+                    $('#table-id').html(data.html);
                 }
             });
             return false;
