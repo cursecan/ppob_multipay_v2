@@ -45,24 +45,32 @@ Product
                 
             </div>
             <div class="thirteen wide column">
-                <table id="table-id" class="ui small table">
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in product_list %}
-                        <tr>
-                            <td>{{ i.product_name }}</td>
-                            <td>{{ i.price|intcomma }}</td>
-                            <td>{{ i.is_active }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div id="table-id" class="ui very relaxed divided list">
+                    {% for i in product_list %}
+                    <div class="item">
+                        <div class="right floated content">
+                            <div class="ui left pointing basic green label">
+                                {% if i.price == 0 %}
+                                    Depend Inquery
+                                {% else %}
+                                    IDR {{ i.price|intcomma }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="content">
+                            <div class="header">
+                                # {{ i.code }}
+                            </div>
+                            <p>
+                                {{ i.product_name }}
+                            </p>
+                            <div class="meta">
+                                <i class="ui small {% if i.is_active %} green {% else %} red {% endif %} label">{% if i.is_active %} Active {% else %} Closed {% endif %}</i>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
