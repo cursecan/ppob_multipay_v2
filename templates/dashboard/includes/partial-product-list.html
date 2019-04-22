@@ -1,0 +1,9 @@
+{% load humanize %}
+
+{% for i in product_list %}
+    <tr>
+        <td>{{ i.product_name }}</td>
+        <td>{{ i.price|intcomma }}</td>
+        <td>{{ i.is_active }}</td>
+    </tr>
+{% endfor %}

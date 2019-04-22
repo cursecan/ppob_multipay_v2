@@ -105,10 +105,34 @@ def productView(request):
     group_objs = Group.objects.filter(
         active = True
     )
+    product_objs = Product.objects.filter(
+        group__code = 'PULSA', operator__code='TSEL'
+    )
     content = {
-        'group_list': group_objs
+        'group_list': group_objs,
+        'product_list': product_objs,
     }
     return render(request, 'dashboard/pg-product.html', content)
+
+
+# PRODUCT JS VIEW
+@login_required
+def productJsonView(request):
+    data = dict()
+    op = request.GET.get('op', 1)
+    gr = request.GET.get('gr', 1)
+
+    product_objs = Product.objects.filter(
+        group_id=gr, operator_id=op
+    )
+    content = {
+        'product_list': product_objs
+    }
+    data['html'] = render_to_string(
+        'dashboard/includes/partial-product-list.html',
+        content, request=request
+    )
+    return JsonResponse(data)
 
 
 @login_required

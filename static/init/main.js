@@ -5,3 +5,4 @@ $('.btn-bars').click(function() {
 });
 
 $('.ui.accordion').accordion();
+$('.ui.dropdown').dropdown();

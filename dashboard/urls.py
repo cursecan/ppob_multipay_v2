@@ -17,4 +17,5 @@ urlpatterns = [
     path('api/commision-profile-<int:id>/', views.json_user_commision_view, name='json_commision_profile'),
     path('api/loan-profile-<int:id>/', views.json_user_loan_view, name='json_loan_profile'),
     path('api/application/', views.get_application_view, name='application'),
+    path('api/products/', views.productJsonView, name='json_products'),
 ]
