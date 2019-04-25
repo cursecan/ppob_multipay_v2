@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 
 from .models import Witdraw
 
@@ -9,6 +10,11 @@ class WitdrawForm(forms.ModelForm):
         fields = [
             'create_by', 'amount'
         ]
+
+    def __init__(self, *args, **kwargs):
+        self.fields['create_by'].queryset = User.objects.filter(
+            profile__user_type=2
+        )
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
