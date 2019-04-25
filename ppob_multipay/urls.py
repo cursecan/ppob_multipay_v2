@@ -52,6 +52,7 @@ urlpatterns = [
     path('api/billing/', include('billing.api.urls')),
     path('api/payment/', include('payment.api.urls')),
     path('api/bankrecon/', include('bankrecon.api.urls')),
+    path('api/withdraw/', include('witdraw.api.urls')),
 
     path('trx-bulk-checking/', transac_view.bulk_update_trx),
 ]

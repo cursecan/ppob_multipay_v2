@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'userprofile',
     'dashboard',
     'bankrecon',
+    'witdraw',
 ]
 
 MIDDLEWARE = [

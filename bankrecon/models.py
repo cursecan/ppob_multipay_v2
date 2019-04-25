@@ -4,6 +4,7 @@ from django.db.models import Sum
 from django.contrib.auth.models import User
 
 from core.models import CommonBase
+from witdraw.models import Witdraw
 
 from datetime import datetime
 import re
@@ -38,13 +39,23 @@ class BankAccount(CommonBase):
 
 
 class Reconciliation(CommonBase):
+    CM = 0
+    TR = 1
+    RESOUCE_LIST = (
+        (CM, 'Withdraw Commision'),
+        (TR, 'Transfer')
+    )
+
     reconid = models.CharField(max_length=30, unique=True, editable=False)
-    bank_account = models.ForeignKey(BankAccount, on_delete=models.CASCADE, related_name='bank_account')
+    bank_account = models.ForeignKey(BankAccount, on_delete=models.CASCADE, related_name='bank_account', blank=True, null=True)
     nominal = models.DecimalField(max_digits=15, decimal_places=0)
     trans_date = models.DateTimeField(default=timezone.now)
     keterangan = models.TextField(max_length=500, blank=True)
     marker = models.TextField(max_length=30, blank=True)
     identified = models.BooleanField(default=False)
+
+    resource = models.PositiveSmallIntegerField(choices=RESOUCE_LIST, default=TR)
+    commision_witdraw = models.OneToOneField(Witdraw, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         ordering = [
@@ -55,7 +66,7 @@ class Reconciliation(CommonBase):
         if self.reconid is None or self.reconid == '':
             tm = timezone.now()
             dt = datetime.strftime(tm, '%Y%m%d')
-            bank_code = self.bank_account.bank.bank_code
+            bank_code = self.bank_account.bank.bank_code if self.bank_account else 'CM'
             c = Reconciliation.objects.filter(trans_date__date=tm.date()).count() + 1
 
             self.reconid = bank_code + dt + str(c).rjust(4,'0')
@@ -69,7 +80,7 @@ class Reconciliation(CommonBase):
 
 class Catatan(CommonBase):
     nama = models.CharField(max_length=20, blank=True)
-    category = models.CharField(max_length=2, blank=True)
+    category = models.CharField(max_length=20, blank=True)
     nomor = models.CharField(max_length=20)
     keterangan = models.CharField(max_length=30)
     create_by = models.ForeignKey(User, on_delete=models.CASCADE, default=1)

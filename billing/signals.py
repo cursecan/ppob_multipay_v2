@@ -32,14 +32,14 @@ def wallet_commision_update(sender, instance, created, update_fields, **kwargs):
     """
         Commisison mempengaruhi nilai wallet-commision sesuai balance comisi
     """
-    # if created:
-    #     if instance.verified:
-    #         instance.balance = instance.agen.profile.wallet.commision + instance.debit - instance.credit
-    #         instance.save()
+    if created:
+        if instance.verified:
+            instance.balance = instance.agen.profile.wallet.commision + instance.debit - instance.credit
+            instance.save()
 
-    #         Wallet.objects.filter(
-    #             profile__user=instance.agen
-    #         ).update(commision=instance.balance)
+            Wallet.objects.filter(
+                profile__user=instance.agen
+            ).update(commision=instance.balance)
 
     # Update commision saldo if already verified commision
     if update_fields:

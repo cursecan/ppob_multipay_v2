@@ -11,6 +11,9 @@ from payment.models import (
     Payment, LoanPayment,
     Transfer,
 )
+from witdraw.models import (
+    Witdraw
+)
 
 class BillingRecord(CommonBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,9 +73,13 @@ class CommisionRecord(CommonBase):
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     prev_com = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     sequence = models.PositiveSmallIntegerField(default=1)
+
     verified = models.BooleanField(default=False)
     instansale_trx = models.ForeignKey(InstanSale, on_delete=models.CASCADE, blank=True, null=True, related_name='commision_instan_trx')
     ppobsale_trx = models.ForeignKey(PpobSale, on_delete=models.CASCADE, blank=True, null=True, related_name='commision_ppob_trx')
+    
+    is_withdraw = models.BooleanField(default=False)
+    withdraw = models.OneToOneField(Witdraw, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Komisi'
