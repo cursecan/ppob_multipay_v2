@@ -18,7 +18,7 @@ from .resources import (
 class WalletInline(admin.TabularInline):
     model = Wallet
     fields = [
-        'saldo', 'commision', 'limit', 'init_loan'
+        'init_loan'
     ]
     min_num = 1
     max_num = 1
