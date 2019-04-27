@@ -3,6 +3,8 @@ from bankrecon.models import (
 )
 
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+from django.utils import timezone
 
 
 class BankSerializer(ModelSerializer):
@@ -51,3 +53,47 @@ class CatatanSerializer(ModelSerializer):
             create_by = create_by
         )
         return catatan_obj
+
+
+class CatatanBasicSerializer(ModelSerializer):
+    class Meta:
+        model = Catatan
+        fields = [
+            'id', 
+            'nama', 'category',
+            'nomor', 'keterangan'
+        ]
+        read_only_fields = [
+            'id', 
+            'nama', 'category',
+            'nomor', 'keterangan'
+        ]
+
+
+class CatatanDeletingSerializer(ModelSerializer):
+    is_delete = serializers.BooleanField()
+
+    class Meta:
+        model = Catatan
+        fields = [
+            'id', 
+            'nama', 'category',
+            'nomor', 'keterangan', 'is_delete'
+        ]
+        read_only_fields = [
+            'id', 
+            'nama', 'category',
+            'nomor', 'keterangan'
+        ]
+
+    def update(self, instance, validated_data):
+        is_delete = validated_data.get('is_delete', instance.is_delete)
+        instance.is_delete = is_delete
+        instance.delete_on = timezone.now()
+        instance.save()
+        return instance
+
+
+        
+
+    

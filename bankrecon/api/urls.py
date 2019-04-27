@@ -8,4 +8,5 @@ urlpatterns = [
     path('bank/<int:id>/', views.BankAccountDetailApiView.as_view(), name='bank_detail'),
     path('catatan/', views.CatatanListApiView.as_view(), name='catatan'),
     path('catatan/new/', views.CatatanCreateApiView.as_view(), name='create_catatan'),
+    path('catatan/<int:id>/update/', views.CatatanUpdateApiView.as_view(), name='update_catatan'),
 ]
