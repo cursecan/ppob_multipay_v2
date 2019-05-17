@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'dashboard',
     'bankrecon',
     'witdraw',
+    'api_production',
 ]
 
 MIDDLEWARE = [

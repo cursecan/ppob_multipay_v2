@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ProductVersion
+
+@admin.register(ProductVersion)
+class ProductVersion(admin.ModelAdmin):
+    list_display = [
+        'version', 'description'
+    ]

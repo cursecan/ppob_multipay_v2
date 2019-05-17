@@ -14,19 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
-from rest_framework_jwt.views import (
-    obtain_jwt_token, refresh_jwt_token, verify_jwt_token
-)
-
 from core import views as core_views
 from dashboard import views as dashboard_views
 from transaction import views as transac_view
+
+from rest_framework_jwt.views import (
+    obtain_jwt_token, refresh_jwt_token, verify_jwt_token
+)
 
 urlpatterns = [
     path('', dashboard_views.index, name='home'),
@@ -41,11 +41,12 @@ urlpatterns = [
 
     path('activate/<slug:uidb64>/<slug:token>/', core_views.activate, name='activate'),
     path('activate-success/', core_views.activate_success, name='activate_success'),
-    path('jwt-api-token-auth/', obtain_jwt_token),
-    path('jwt-api-token-refresh/', refresh_jwt_token),
-    path('jwt-api-token-verify/', verify_jwt_token),
     path('adminpanel/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
+    
+    path('trx-bulk-checking/', transac_view.bulk_update_trx),
+
+    # INI HARUS DELETE KLO SUDAH GANTI HOST API
     path('api/profile/', include('userprofile.api.urls')),
     path('api/product/', include('product.api.urls')),
     path('api/transaction/', include('transaction.api.urls')),
@@ -53,8 +54,12 @@ urlpatterns = [
     path('api/payment/', include('payment.api.urls')),
     path('api/bankrecon/', include('bankrecon.api.urls')),
     path('api/withdraw/', include('witdraw.api.urls')),
+    path('api/app/', include('api_production.api.urls')),
 
-    path('trx-bulk-checking/', transac_view.bulk_update_trx),
+    path('jwt-token-auth/', obtain_jwt_token),
+    path('jwt-token-refresh/', refresh_jwt_token),
+    path('jwt-token-verify/', verify_jwt_token),
+    # END DELETE
 ]
 
 if not settings.DEBUG:
