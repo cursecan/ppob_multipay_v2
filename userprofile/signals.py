@@ -7,6 +7,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
 
 from .models import (
     Profile, Wallet, UploadUser
@@ -26,12 +27,17 @@ def initial_user_profile(sender, instance, created, **kwargs):
         )
 
         # Sending Email
+        domain = 'http://www.warungid.com/activate/{}/{}/'.format(
+            urlsafe_base64_encode(force_bytes(instance.pk)),
+            account_activation_token.make_token(instance)
+        )
+
         subject = 'Warungid Account Activation'
         message = render_to_string('core/account_activation_email.html', {
             'user': instance,
-            'domain': 'http://www.warungid.com',
-            'uid': urlsafe_base64_encode(force_bytes(instance.pk)).decode(),
-            'token': account_activation_token.make_token(instance),
+            'domain': domain,
+            # 'uid': urlsafe_base64_encode(force_bytes(instance.pk)),
+            # 'token': account_activation_token.make_token(instance),
         })
         send_mail(subject, message, 'no-reply@warungid.com', [instance.email])
 

@@ -1,7 +1,8 @@
 {% autoescape off %}
+{% load hosts %}
 Hi {{ user.username }},
 
 Please click on the link below to confirm your registration:
 
-{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{{ domain }}
 {% endautoescape %}

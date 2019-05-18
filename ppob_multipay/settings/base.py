@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
-    # 'django_hosts',
+    'django_hosts',
     'rest_framework',
     'import_export',
     'background_task',
