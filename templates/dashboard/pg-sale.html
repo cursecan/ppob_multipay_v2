@@ -35,6 +35,7 @@
                         <tr>
                             <th>#</th>
                             <th>Info Trx</th>
+                            <th>User</th>
                             <th>Status</th>
                             <th>Price</th>
                             <th class="right aligned">Date</th>
@@ -50,6 +51,14 @@
                                     <div class="description">
                                         {{ sale.get_trx.product.product_name|title }}; {{ sale.get_trx.customer }}.
                                         <p>S/N {{ sale.get_api_trx.sn|default:'-' }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="ui list">
+                                    <div class="header">{{ sale.user.profile.get_fullname|title }}</div>
+                                    <div class="description">
+                                        <a>({{ sale.user.profile.get_user_type_display|lower }})</a>
                                     </div>
                                 </div>
                             </td>

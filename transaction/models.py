@@ -112,11 +112,9 @@ class InstanSale(CommonBase):
             self.product_code = self.product.code
             self.price = self.product.price
             self.commision = self.product.commision
-            if self.create_by.user_type == 2:
-                self.price = self.product.price - self.product.commision
+            if self.create_by.profile.user_type == 2:
+                self.price = self.product.agen_price()
                 self.commision = 0
-
-            
 
         super(InstanSale, self).save(*args, **kwargs)
 
@@ -150,12 +148,6 @@ class InstanSale(CommonBase):
             return self.price - self.responseinsale.saldo_terpotong
         except :
             return 0
-
-    def agen_price(self):
-        return  self.price - self.commision
-
-    def agen_commision(self):
-        return 0
 
 class Status(CommonBase):
     OPEN = 'OP'

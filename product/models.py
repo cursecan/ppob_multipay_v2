@@ -71,3 +71,9 @@ class Product(CommonBase):
 
     def __str__(self):
         return self.product_name
+
+    def agen_price(self):
+        return  self.price - self.commision
+
+    def agen_commision(self):
+        return 0

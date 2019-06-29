@@ -59,7 +59,7 @@ class ProductDetailApiView(RetrieveAPIView):
     queryset = Product.objects.filter(is_active=True)
 
     def get_serializer_class(self):
-        if self.request.user.profile.user_type == 2:
+        if self.request.user.profile.user_type:
             return ProductAgenSerializer
 
         return ProductSerializer

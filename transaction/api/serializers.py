@@ -253,10 +253,15 @@ class InstanSaleCustomSerializer(InstanSaleSerializer):
 
         # Pengecekan saldo user
         cur_saldo = user_obj.profile.wallet.get_saldo()
+
+        price = product_obj.price
+        # Set produk price for agen
+        if user_obj.profile.user_type == 2:
+            price = product_obj.agen_price()
         
         # Saldo tidak cukup
-        if cur_saldo <  product_obj.price:
-            unprice = product_obj.price - cur_saldo
+        if cur_saldo <  price:
+            unprice = price - cur_saldo
 
             # Type user 2 memiliki Agen
             if user_obj.profile.agen.profile.user_type == 2:
