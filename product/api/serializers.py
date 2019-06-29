@@ -35,6 +35,28 @@ class ProductSerializer(serializers.ModelSerializer):
             'is_active'
         ]
 
+class ProductAgenSerializer(serializers.ModelSerializer):
+    operator = OperatorSerializer()
+    group = GroupSerializer()
+    price = serializers.SerializerMethodField()
+    commision = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'code', 'product_name',
+            'operator', 'group',
+            'nominal', 'price', 'commision',
+            'is_active'
+        ]
+
+    def get_price(self, obj):
+        return obj.agen_price()
+
+    def get_commision(self, obj):
+        return obj.agen_commision()
+
 
 class ProductInfoSerializer(serializers.ModelSerializer):
     class Meta:

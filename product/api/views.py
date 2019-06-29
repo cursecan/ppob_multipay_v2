@@ -11,6 +11,12 @@ from product.models import (
 class ProductListApiView(ListAPIView):
     serializer_class = ProductSerializer
 
+    def get_serializer_class(self):
+        if self.request.user.profile.user_type == 2:
+            return ProductAgenSerializer
+
+        return ProductSerializer
+
     def get_queryset(self):
         queryset = Product.objects.filter(is_active=True, type_product='IN')
         operator = self.request.GET.get('ocode', None)
@@ -46,11 +52,17 @@ class PpobProductListApiView(ListAPIView):
         return queryset
 
 
+
 class ProductDetailApiView(RetrieveAPIView):
     serializer_class = ProductSerializer
     lookup_url_kwarg = 'id'
     queryset = Product.objects.filter(is_active=True)
 
+    def get_serializer_class(self):
+        if self.request.user.profile.user_type == 2:
+            return ProductAgenSerializer
+
+        return ProductSerializer
 
 class OperatorListApiView(ListAPIView):
     serializer_class = OperatorSerializer
