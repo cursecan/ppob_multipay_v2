@@ -58,7 +58,7 @@
                                 <div class="ui list">
                                     <div class="header">{{ sale.user.profile.get_fullname|title }}</div>
                                     <div class="description">
-                                        <a>({{ sale.user.profile.get_user_type_display|lower }})</a>
+                                        <a title="Member of {{ sale.user.profile.agen.email }}">({{ sale.user.profile.get_user_type_display|lower }})</a>
                                     </div>
                                 </div>
                             </td>

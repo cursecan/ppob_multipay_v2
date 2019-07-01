@@ -1,0 +1,9 @@
+{% autoescape off %}
+
+Hi {{ bil.user.profile.get_fullname }},
+
+Telah diterima dana sebesar Rp {{ bil.debit }}, saldo Anda saat ini menjadi Rp {{ bil.balance }}
+
+Warungid,  
+Serasa Warung Milik Kamu Sendiri
+{% endautoescape %}

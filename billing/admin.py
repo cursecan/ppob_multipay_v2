@@ -9,7 +9,7 @@ from .models import (
 class BillingRecordAdmin(admin.ModelAdmin):
     list_per_page = 20
     search_fields = [
-        'instansale_trx__code', 'ppobsale_trx__code', 'user__email'
+        'instansale_trx__code', 'ppobsale_trx__code', 'user__email', 'user__profile__agen__email'
     ]
     list_display = [
         'display_sale', 'display_product',

@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+Hi {{ bil.user.profile.get_fullname }},
+
+Telah ditransfer dana sebesar Rp {{ bil.credit }} ke akun tujuan {{ bil.transfer.receiver.email }}
+
+Harap segera laporan jika Anda tidak merasa melakukan transaksi ini.
+
+Warungid,  
+Serasa Warung Milik Kamu Sendiri
+{% endautoescape %}

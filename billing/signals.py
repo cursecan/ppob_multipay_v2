@@ -6,6 +6,7 @@ from .models import (
     BillingRecord, CommisionRecord, LoanRecord
 )
 from userprofile.models import Wallet
+from .tasks import sending_email_notif
 
 # TRIGER BILLING
 @receiver(post_save, sender=BillingRecord)
@@ -25,6 +26,13 @@ def wallet_saldo_update(sender, instance, created, **kwargs):
         Wallet.objects.filter(
             profile__user=instance.user
         ).update(saldo=instance.balance)
+
+
+@receiver(post_save, sender=BillingRecord)
+def email_notif_triger(sender, instance, created, **kwargs):
+    if created:
+        if instance.payment or instance.transfer :
+           sending_email_notif(instance.id)
 
 
 @receiver(post_save, sender=CommisionRecord)
