@@ -43,6 +43,7 @@ urlpatterns = [
     path('activate-success/', core_views.activate_success, name='activate_success'),
     path('adminpanel/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
+    path('product/', include('product.urls')),
     
     path('trx-bulk-checking/', transac_view.bulk_update_trx),
 
