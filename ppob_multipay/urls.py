@@ -44,6 +44,7 @@ urlpatterns = [
     path('adminpanel/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
     path('product/', include('product.urls')),
+    path('profile/', include('userprofile.urls')),
     
     path('trx-bulk-checking/', transac_view.bulk_update_trx),
 
