@@ -34,7 +34,7 @@ class ProfileAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'user', 'user_type', 'agen', 'display_status',
-        'display_saldo', 'display_commision', 'display_limit',
+        'display_saldo', 'display_commision', 'display_limit', 'display_init_loan'
     ]
 
     fieldsets = (
@@ -67,10 +67,15 @@ class ProfileAdmin(admin.ModelAdmin):
     def display_status(self, instance):
         return instance.user.is_active
 
+
+    def display_init_loan(self, instance):
+        return instance.wallet.init_loan
+
     display_saldo.short_description = 'Saldo'
     display_commision.short_description = 'Commision'
     display_limit.short_description = 'Limit'
     display_status.short_description = 'is_Active'
+    display_init_loan.short_description = 'Old Loan'
     display_status.boolean = True
 
 
