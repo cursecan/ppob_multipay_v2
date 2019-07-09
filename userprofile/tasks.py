@@ -27,9 +27,9 @@ def send_invois_email_api():
     profile_objs = Profile.objects.filter(
         wallet__init_loan__gt=0
     )
-	for i in profile_objs:
+    for i in profile_objs:
         try :
-            requests.post("https://api.mailgun.net/v3/mg.warungid.com/messages", timeout=15
+            requests.post("https://api.mailgun.net/v3/mg.warungid.com/messages", timeout=15,
             auth=("api", settings.MG_KEY),
             data={"from": "Warungid Info <info@mg.warungid.com>",
                 "to": "{} <{}}>".format(i.get_fullname(), i.user.email),
