@@ -5,7 +5,7 @@ from django.conf import settings
 
 from .models import Profile
 
-import requests
+import requests, json
 
 @background(schedule=1)
 def send_email_invois():
@@ -28,13 +28,10 @@ def send_invois_email_api():
         wallet__init_loan__gt=0
     )
     for i in profile_objs:
-        try :
-            requests.post("https://api.mailgun.net/v3/mg.warungid.com/messages", timeout=15,
-            auth=("api", settings.MG_KEY),
-            data={"from": "Warungid Info <info@mg.warungid.com>",
-                "to": "{} <{}}>".format(i.get_fullname(), i.user.email),
-                "subject": "Informasi Tagihan Warungid",
-                "template": "alertemplate",
-                "h:X-Mailgun-Variables": json.dumps({"full_name": i.get_fullname(), "amount":"{:,.2f}".format(int(i.wallet.get_loan()+i.wallet.init_loan))})})
-        except:
-            pass
+        requests.post("https://api.mailgun.net/v3/mg.warungid.com/messages", timeout=15,
+        auth=("api", settings.MG_KEY),
+        data={"from": "Warungid Info <info@mg.warungid.com>",
+            "to": "{} <{}>".format(i.get_fullname(), i.user.email),
+            "subject": "Informasi Tagihan Warungid",
+            "template": "alertemplate",
+            "h:X-Mailgun-Variables": json.dumps({"full_name": i.get_fullname(), "amount":"{:,.2f}".format(int(i.wallet.get_loan()+i.wallet.init_loan))})})
