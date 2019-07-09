@@ -167,3 +167,6 @@ RB_PIN = config('RB_PIN')
 
 ROOT_HOSTCONF = 'ppob_multipay.hosts'  # Change `mysite` to the name of your project
 DEFAULT_HOST = 'www'  # Name of the default host, we will create it in the next steps
+
+
+MG_KEY = config("MG_KEY")
