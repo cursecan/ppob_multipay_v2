@@ -22,6 +22,7 @@ from django.contrib.auth import views as auth_views
 
 from core import views as core_views
 from dashboard import views as dashboard_views
+from v2 import views as v2_view
 from transaction import views as transac_view
 
 from rest_framework_jwt.views import (
@@ -29,7 +30,7 @@ from rest_framework_jwt.views import (
 )
 
 urlpatterns = [
-    path('', dashboard_views.index, name='home'),
+    path('', v2_view.HomeView.as_view(), name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/custom-login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('reset-password/', auth_views.PasswordResetView.as_view(), name='password_reset'),
@@ -45,6 +46,7 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('product/', include('product.urls')),
     path('profile/', include('userprofile.urls')),
+    path('v2/', include('v2.urls')),
     
     path('trx-bulk-checking/', transac_view.bulk_update_trx),
 

@@ -1,0 +1,44 @@
+{% extends 'base_v2.html' %}
+
+{% block title %}
+Warungid - Serasa Warung Milik Sendiri
+{% endblock %}
+
+{% block sub_base %}
+    <div class="ui vertical computer only segment">
+        <div class="ui secondary menu fluid container">
+            <div class="item header">
+                WARUNGID
+            </div>
+        </div>
+    </div>
+    <div class="ui vertical inverted teal segment">
+        <div class="ui secondary inverted teal menu fluid container">
+            <a class="item">
+                <i class="home icon"></i>
+                Home
+            </a>
+            <a class="item">
+                <i class="globe icon"></i>
+                Produk & layanan
+            </a>
+            <div class="right menu">
+                <a onclick="window.location.href={% url 'login' %}" class="item">
+                    <i class="sign in alternate icon"></i>
+                    Masuk
+                </a>
+            </div>
+        </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+    <div class="ui vertical segment">
+        <div class="ui secondary menu container">
+            <div class="center menu">
+                <div class="item">
+                    Warungid &copy; 2018 Created &nbsp;<i class="heart red icon"></i> By &nbsp; <strong>A&F</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

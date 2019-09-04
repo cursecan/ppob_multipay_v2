@@ -138,7 +138,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'env_root', 'media_root')
 
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'dashboard:index'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Rest Framework

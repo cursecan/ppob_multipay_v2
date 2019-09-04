@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Melayani penjualan pulsa, data, token listrik, voucher game, pembayaran PPOB dll.">
+    <meta name="keywords" content="Penjualan Pulsa, Penjualan Pulsa Murah, PPOB, Juap Pulsa Data">
+    {% block meta %}
+    {% endblock %}
+    <link rel="icon" type="image/png" href="{% static 'image/logo-title.png' %}">
+
+    <!-- Semantic -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.8/dist/semantic.min.css">
+    {% block css %}
+    {% endblock %}
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+</head>
+<body>
+    {% block sub_base %}
+    {% endblock %}
+
+    <!-- Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Semantic -->
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.8/dist/semantic.min.js"></script>
+    {% block js %}
+    {% endblock %}
+</body>
+</html>
