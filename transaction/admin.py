@@ -18,9 +18,9 @@ from .forms import (
 # class InstanSaleAdmin(admin.ModelAdmin):
 #     form = InstanSaleForm
 
-# @admin.register(PpobSale)
-# class PpobSaleAdmin(admin.ModelAdmin):
-#     form = PpobSaleForm
+@admin.register(PpobSale)
+class PpobSaleAdmin(admin.ModelAdmin):
+    form = PpobSaleForm
 
 # @admin.register(Status)
 # class StatusAdmin(admin.ModelAdmin):
