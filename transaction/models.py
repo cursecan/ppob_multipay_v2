@@ -45,7 +45,7 @@ class PpobSale(CommonBase):
             self.product_code = self.product.code
             self.commision = self.product.commision
 
-            if self.product.nominal != 0:
+            if self.product.nominal != 0 and self.product.price !=0 :
                 self.price = self.product.price
                 self.nominal = self.product.nominal
 

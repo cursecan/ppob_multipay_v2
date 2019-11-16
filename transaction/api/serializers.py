@@ -142,7 +142,7 @@ class PpobSaleCustomSerializer(PpobSaleSerializer):
         # Spesifik produk obj
         product_obj = product_objs.get()
         price_product = product_obj.price
-        if price_product == 0 :
+        if price_product == 0 or product_obj.nominal == 0:
             # Jika price 0, artinya harga diambil dari inquery produknya
             price_product = inquery_obj.responseppobsale.get_price()
 
